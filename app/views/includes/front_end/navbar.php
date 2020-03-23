@@ -1,6 +1,6 @@
 <div class="container">
       <nav class="navbar navbar-expand-xl navbar-dark bg-dark mb-4">
-        <a class="navbar-brand" href="#">SmartShop</a>
+        <a class="navbar-brand" href="<?php echo URLROOT; ?>">SmartShop</a>
         <form class="form-inline mt-md-0 mr-auto">
           <input class="form-control mr-sm-2" type="text" placeholder="Bạn tìm mua gì..." aria-label="Search"
             id="searchForm">
@@ -17,9 +17,9 @@
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-mobile fa-lg"></i> - Điện Thoại</a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-tablet fa-lg"></i> - Tablet</a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-laptop fa-lg"></i> - Laptop</a>
 
@@ -35,12 +35,21 @@
                 <i class="fas fa-shopping-cart"></i>
               </a>
             </li>
+            <?php if (isLoggedIn()) : ?>
             <li class="nav-item">            
-              <a href="#" class="nav-link" data-toggle="modal" data-target="#loginModal">Login</a>
+              <a href="" class="nav-link""><?php echo $_SESSION['user_name']; ?></a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link" data-toggle="modal" data-target="#registerModal">Register</a>
+              <a href="<?php echo URLROOT; ?>/users/logout" class="nav-link">Logout</a>
             </li>
+            <?php else : ?>
+            <li class="nav-item">            
+              <a href="<?php echo URLROOT; ?>/users/login" class="nav-link"">Đăng nhập</a>
+            </li>
+            <li class="nav-item">
+              <a href="<?php echo URLROOT; ?>/users/register" class="nav-link">Đăng ký</a>
+            </li>
+            <?php endif;?>
           </ul>
         </div>
       </nav>

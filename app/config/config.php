@@ -12,7 +12,7 @@ define('CHARSET', 'utf8mb4');
 define('APPROOT', dirname(dirname(__FILE__)));
 
 // URL root
-define('URLROOT', 'http://localhost/smartshop/');
+define('URLROOT', 'http://localhost/smartshop');
 
 // Site name
 define('SITENAME','SmartShop');

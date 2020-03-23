@@ -57,10 +57,10 @@
     crossorigin="anonymous"></script>
 
   <!-- Bootstrap -->
-  <script src="js/bootstrap.min.js"></script>
+  <script src="<?php echo URLROOT?>/js/bootstrap.min.js"></script>
 
   <!-- Font Awesome -->
-  <script src="js/all.min.js"></script>
+  <script src="<?php echo URLROOT?>/js/all.min.js"></script>
 </body>
 
 </html>
