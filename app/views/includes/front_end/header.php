@@ -17,7 +17,7 @@
   <title>SmartShop</title>
 </head>
 <body>
-  <header>
+  <header id="page-top">
     <!-- Navbar -->
     <?php require_once APPROOT . '/views/includes/front_end/navbar.php' ?>
 

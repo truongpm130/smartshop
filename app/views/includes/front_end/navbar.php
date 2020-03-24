@@ -17,9 +17,9 @@
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-mobile fa-lg"></i> - Điện Thoại</a>
             </li>
-            <!-- <li class="nav-item">
+            <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-tablet fa-lg"></i> - Tablet</a>
-            </li> -->
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-laptop fa-lg"></i> - Laptop</a>
 
@@ -32,12 +32,12 @@
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
               <a href="#" class="nav-link">
-                <i class="fas fa-shopping-cart"></i>
+                <i class="fas fa-shopping-cart fa-lg"></i>
               </a>
             </li>
             <?php if (isLoggedIn()) : ?>
             <li class="nav-item">            
-              <a href="" class="nav-link""><?php echo $_SESSION['user_name']; ?></a>
+              <a href="<?php echo URLROOT ?>/admin/index" class="nav-link""><?php echo $_SESSION['user_name']; ?></a>
             </li>
             <li class="nav-item">
               <a href="<?php echo URLROOT; ?>/users/logout" class="nav-link">Logout</a>

@@ -50,6 +50,33 @@ class User extends Database {
         
     }
 
+    public function update($data)
+    {
+        if (empty($data['password'])) {
+            $this->db->query('UPDATE user SET first_name = :first_name, last_name = :last_name, email = :email WHERE id = :id');
+
+            $this->db->bind('first_name', $data['first_name']);
+            $this->db->bind('last_name', $data['last_name']);
+            $this->db->bind('email', $data['email']);
+            $this->db->bind('email', $data['id']);
+            
+            
+            $this->db->execute();            
+        }
+    }
+
+    public function delete($id)
+    {
+        $this->db->query('DELETE FROM users WHERE id = :id');
+        $this->db->bind('id', $id);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Find user by email
     public function findUserByEmail($email)      
     {
@@ -67,4 +94,21 @@ class User extends Database {
             return false;
         }
     }
+
+    public function getAllUser()
+    {
+        $this->db->query('SELECT * FROM users');
+        $users = $this->db->resultSet();
+        return $users;
+    }
+
+    // Get user by id
+    public function getUserById($id)
+    {
+        $this->db->query('SELECT * FROM users WHERE id= :id');
+        $this->db->bind('id', $id);
+        $user = $this->db->single();
+        return $user;
+    }
+
 }

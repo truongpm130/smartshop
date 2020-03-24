@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-6 offset-md-3">
             <!-- Flash message -->
-            <?php flash('register_success'); ?>
+            <?php flash('message'); ?>
 
             <!-- Login Form -->
             <div class="card">
