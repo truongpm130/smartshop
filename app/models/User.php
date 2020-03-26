@@ -52,17 +52,18 @@ class User extends Database {
 
     public function update($data)
     {
-        if (empty($data['password'])) {
-            $this->db->query('UPDATE user SET first_name = :first_name, last_name = :last_name, email = :email WHERE id = :id');
+        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, password = :password WHERE id = :id');
 
             $this->db->bind('first_name', $data['first_name']);
             $this->db->bind('last_name', $data['last_name']);
-            $this->db->bind('email', $data['email']);
-            $this->db->bind('email', $data['id']);
+            $this->db->bind('password', $data['password']);
+            $this->db->bind('id', $data['id']);
             
-            
-            $this->db->execute();            
-        }
+            if ($this->db->execute()) {
+                return true;
+            } else {
+                return false;
+            }
     }
 
     public function delete($id)
@@ -109,6 +110,28 @@ class User extends Database {
         $this->db->bind('id', $id);
         $user = $this->db->single();
         return $user;
+    }
+
+    public function activeUser($id)
+    {
+        $this->db->query('UPDATE users SET status = 1 WHERE id= :id');
+        $this->db->bind('id', $id);
+        if($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function inactiveUser($id)
+    {
+        $this->db->query('UPDATE users SET status = 0 WHERE id= :id');
+        $this->db->bind('id', $id);
+        if($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

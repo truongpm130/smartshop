@@ -27,7 +27,7 @@
           <a href="<?php echo URLROOT; ?>/admin/index" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
 
           <!-- Edit User -->
-          <form action="<?php echo URLROOT; ?>/users/update" method="post">
+          <form action="<?php echo URLROOT; ?>/users/update/<?php echo $data['user']->id; ?>" method="post">
                         <div class="row">
                             <div class="form-group col">
                                 <label for="first_name">Tên: </label>
@@ -42,11 +42,8 @@
                             
                         </div>
 
-                        <div class="form-group">
-                            <label for="email">Email: </label>
-                            <input type="text" name="email" id="" class="form-control <?php echo (!empty($data['email_err']) ? 'is-invalid' : '')?>" value="<?php echo $data['user']->email; ?>">
-                            <span class="invalid-feedback"><?php echo $data['email_err']; ?></span> 
-                        </div>
+                        <input type="hidden" name="email" value="<?php echo $data['user']->email; ?>">
+
                         <div class="form-group">
                             <label for="password">Mật khẩu: </label>
                             <input type="password" name="password" id="" class="form-control <?php echo (!empty($data['password_err']) ? 'is-invalid' : '')?>">
