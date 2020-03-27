@@ -135,6 +135,8 @@ class UsersController extends Controller
 
     public function add()
     {
+        $roles = $this->roleModel->getAllRoles();
+
         // Check for Post
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Process form
@@ -148,8 +150,12 @@ class UsersController extends Controller
                 // Hash password
                 $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
+                if (isset($_POST['role'])) {
+                    $data['role'] = $_POST['role'];
+                }
+
                 // Register User
-                if ($this->userModel->register($data)) {
+                if ($this->userModel->add($data)) {
                     flash('message', 'Tạo người dùng thành công!'); 
                     redirect('admin/users/index');
                     
@@ -158,6 +164,7 @@ class UsersController extends Controller
                 }
             } else {
                 // Load view with errors
+                $data['roles'] = $roles;
                 $this->view('admin/users/add', $data);
             }
         } else {
@@ -174,7 +181,8 @@ class UsersController extends Controller
                 'last_name_err' => '',
                 'email_err' => '',
                 'password_err' => '',
-                'confirm_password_err' => ''
+                'confirm_password_err' => '',
+                'roles' => $roles,
             ];
 
             // Load view            
@@ -185,8 +193,13 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = $this->userModel->getUserById($id);
+        $role = $this->roleModel->getRoleOfUser($id);
+        $roles = $this->roleModel->getAllRoles();
+
         $data = [
             'user' => $user,
+            'role' => $role,
+            'roles' => $roles,
         ];
         return $this->view('admin/users/edit', $data);
     }
@@ -213,6 +226,10 @@ class UsersController extends Controller
                     'last_name_err' => '',
                     'id' => $user->id,
                 ];
+
+                if ($_POST['role']) {
+                    $data['role'] = $_POST['role'];
+                }
 
                 // Validate Name
                 if (empty($data['first_name'])) {

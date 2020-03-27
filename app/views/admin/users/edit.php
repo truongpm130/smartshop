@@ -45,6 +45,22 @@
                         <input type="hidden" name="email" value="<?php echo $data['user']->email; ?>">
 
                         <div class="form-group">
+                            <label for="role"> Vai trò</label>:                            
+                            <select name="role" id="" class="form-control">
+                                <option value="<?php echo $data['role'] ? $data['role']->roleId : '' ?>" selected><?php echo $data['role'] ? $data['role']->roleName : '' ?></option>
+                                <?php if($data['roles']) : ?>
+                                <?php foreach($data['roles'] as $role) : ?>
+                                  <?php 
+                                  if($role->id == $data['role']->roleId) {
+                                    continue;
+                                  } ?>
+                                <option value="<?php echo $role->id ?>"><?php echo $role->name ?></option>
+                                <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select> 
+                        </div>
+
+                        <div class="form-group">
                             <label for="password">Mật khẩu: </label>
                             <input type="password" name="password" id="" class="form-control <?php echo (!empty($data['password_err']) ? 'is-invalid' : '')?>">
                             <span class="invalid-feedback"><?php echo $data['password_err']; ?></span>

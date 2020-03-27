@@ -41,6 +41,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Status</th>
+                <th>Role</th>
                 <th>Created_at</th>
                 <th>Action</th>
               </tr>
@@ -52,6 +53,21 @@
                 <td><?php echo $user->last_name . ' ' . $user->first_name; ?></td>
                 <td><?php echo $user->email; ?></td>
                 <td><?php echo $user->status ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-secondary">Inactive</span>'; ?></td>
+                <td>
+                  <?php 
+                    if ($data['role_user']) {
+                      for ($i = 0; $i < count($data['role_user']); $i++) {
+                        if ($user->id === $data['role_user'][$i]->userId) {
+                          echo $data['role_user'][$i]->roleName;
+                        } else {
+                          echo '';
+                        }
+                      }
+                    } else {
+                      echo '';
+                    }
+                  ?>
+                </td>
                 <td><?php echo $user->created_at; ?></td>
                 <td>
                   <a href="<?php echo URLROOT; ?>/users/edit/<?php echo $user->id; ?>" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Chỉnh sửa"><i class="far fa-edit"></i></a>

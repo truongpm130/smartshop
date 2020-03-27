@@ -47,6 +47,17 @@
                             <input type="text" name="email" id="" class="form-control <?php echo (!empty($data['email_err']) ? 'is-invalid' : '')?>" value="<?php echo $data['email']; ?>">
                             <span class="invalid-feedback"><?php echo $data['email_err']; ?></span> 
                         </div>
+
+                        <div class="form-group">
+                            <label for="role"> Vai trò</label>:                            
+                            <select name="role" id="" class="form-control">
+                                <option value=""></option>
+                                <?php foreach($data['roles'] as $role) : ?>
+                                <option value="<?php echo $role->id ?>"><?php echo $role->name ?></option>
+                                <?php endforeach; ?>
+                            </select> 
+                        </div>
+
                         <div class="form-group">
                             <label for="password">Mật khẩu: </label>
                             <input type="password" name="password" id="" class="form-control <?php echo (!empty($data['password_err']) ? 'is-invalid' : '')?>">

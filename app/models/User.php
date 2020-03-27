@@ -29,6 +29,28 @@ class User extends Database {
 
     }
 
+    // Admin Add User
+    public function add($data)
+    {
+        // Add new user
+        $this->register($data);
+
+        // Get id of new user
+        $this->db->query('SELECT MAX(id) AS newUserId FROM users');
+        $new_id = $this->db->single();
+
+        // Insert data in role_user table
+        $this->db->query('INSERT INTO role_user (user_id, role_id) VALUES (:user_id, :role_id)');
+        $this->db->bind('user_id', $new_id->newUserId);
+        $this->db->bind('role_id', $data['role']);
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     public function login($email, $password)
     {   
 
@@ -52,7 +74,8 @@ class User extends Database {
 
     public function update($data)
     {
-        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, password = :password WHERE id = :id');
+        if (empty($data['role'])) {
+            $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, password = :password WHERE id = :id');
 
             $this->db->bind('first_name', $data['first_name']);
             $this->db->bind('last_name', $data['last_name']);
@@ -64,6 +87,50 @@ class User extends Database {
             } else {
                 return false;
             }
+        } else {
+            $this->db->query('SELECT *
+                            FROM role_user
+                            INNER JOIN users ON role_user.user_id = users.id
+                            INNER JOIN roles ON role_user.role_id = roles.id
+                            WHERE users.id = :id
+                            ');
+
+            $this->db->bind('id', $data['id']);
+            $this->db->execute();
+            
+            if ($this->db->rowCount()) {
+                return $this->updateRoleUser($data);
+            } else {
+                return $this->addRoleUser($data);
+            }
+
+        }
+    }
+
+    public function addRoleUser($data)
+    {
+        $this->db->query('INSERT INTO role_user(user_id, role_id) VALUES (:user_id, :role_id)');
+        $this->db->bind('user_id', $data['id']);
+        $this->db->bind('role_id', $data['role']);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateRoleUser($data)
+    {
+        $this->db->query('UPDATE role_user SET role_id = :role_id WHERE user_id = :user_id');
+        $this->db->bind('user_id', $data['id']);
+        $this->db->bind('role_id', $data['role']);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function delete($id)
