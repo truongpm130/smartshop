@@ -20,14 +20,14 @@
 
       <!-- Nav Item - Profile -->
       <li class="nav-item">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/admin/profile/<?php echo $_SESSION['user_id']; ?>">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Profile</span></a>
       </li>
 
       <!-- Nav Item - Members -->
       <li class="nav-item">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/admin/members">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Members</span></a>
       </li>

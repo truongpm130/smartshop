@@ -37,7 +37,7 @@
             </li>
             <?php if (isLoggedIn()) : ?>
             <li class="nav-item">            
-              <a href="<?php echo URLROOT ?>/admin/index" class="nav-link""><?php echo $_SESSION['user_name']; ?></a>
+              <a href="<?php echo URLROOT ?>/admin/profile/<?php echo $_SESSION['user_id']; ?>" class="nav-link""><?php echo $_SESSION['user_name']; ?></a>
             </li>
             <li class="nav-item">
               <a href="<?php echo URLROOT; ?>/users/logout" class="nav-link">Logout</a>

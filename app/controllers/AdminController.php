@@ -10,7 +10,7 @@ class AdminController extends Controller {
         $this->roleModel = $this->model('Role');
     }
 
-    public function index()
+    public function members()
     {
         $users = $this->userModel->getAllUser();
         $all_rule_user = $this->roleModel->getAllRoleUser();
@@ -20,6 +20,16 @@ class AdminController extends Controller {
             'role_user' => $all_rule_user,
         ];
         return $this->view('admin/users/index', $data);
+    }
+
+    public function profile($id)
+    {
+        $user = $this->userModel->getUserById($id);
+        $data = [
+            'user' => $user,
+        ];
+
+        return $this->view('admin/profile/index', $data);
     }
 
 }

@@ -17,4 +17,7 @@ define('URLROOT', 'http://localhost/smartshop');
 // Site name
 define('SITENAME','SmartShop');
 
+// Default Avatar
+define('AVATAR', URLROOT . '/images/users/avatar.png');
+
 

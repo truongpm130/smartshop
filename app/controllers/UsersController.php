@@ -130,7 +130,7 @@ class UsersController extends Controller
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_email'] = $user->email;
         $_SESSION['user_name'] = $user->last_name . ' ' . $user->first_name;
-        redirect('home');
+        redirect('/admin/profile');
     }
 
     public function add()

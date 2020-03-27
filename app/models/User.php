@@ -74,20 +74,20 @@ class User extends Database {
 
     public function update($data)
     {
-        if (empty($data['role'])) {
-            $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, password = :password WHERE id = :id');
+        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, password = :password WHERE id = :id');
 
-            $this->db->bind('first_name', $data['first_name']);
-            $this->db->bind('last_name', $data['last_name']);
-            $this->db->bind('password', $data['password']);
-            $this->db->bind('id', $data['id']);
-            
-            if ($this->db->execute()) {
-                return true;
-            } else {
-                return false;
-            }
+        $this->db->bind('first_name', $data['first_name']);
+        $this->db->bind('last_name', $data['last_name']);
+        $this->db->bind('password', $data['password']);
+        $this->db->bind('id', $data['id']);
+
+        if ($this->db->execute()) {
+
         } else {
+            exit('Something went wrong!');
+        }
+
+        if (!empty($data['role'])) {
             $this->db->query('SELECT *
                             FROM role_user
                             INNER JOIN users ON role_user.user_id = users.id
@@ -103,8 +103,7 @@ class User extends Database {
             } else {
                 return $this->addRoleUser($data);
             }
-
-        }
+        } 
     }
 
     public function addRoleUser($data)
