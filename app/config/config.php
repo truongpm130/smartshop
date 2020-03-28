@@ -20,4 +20,8 @@ define('SITENAME','SmartShop');
 // Default Avatar
 define('AVATAR', URLROOT . '/images/users/avatar.png');
 
+define('AVATAR_USER_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images/users/');
+
+// Photo upload max size
+define('MAX_SIZE', '5000000');
 

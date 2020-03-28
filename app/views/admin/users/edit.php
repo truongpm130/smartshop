@@ -24,7 +24,7 @@
 
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800 d-inline-block">Users - Edit</h1>
-          <a href="<?php echo URLROOT; ?>/admin/index" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
+          <a href="<?php echo URLROOT; ?>/admin/members" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
 
           <!-- Edit User -->
           <form action="<?php echo URLROOT; ?>/users/update/<?php echo $data['user']->id; ?>" method="post">
@@ -60,16 +60,6 @@
                             </select> 
                         </div>
 
-                        <div class="form-group">
-                            <label for="password">Mật khẩu: </label>
-                            <input type="password" name="password" id="" class="form-control <?php echo (!empty($data['password_err']) ? 'is-invalid' : '')?>">
-                            <span class="invalid-feedback"><?php echo $data['password_err']; ?></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm_password">Xác nhận mật khẩu: </label>
-                            <input type="password" name="confirm_password" id="" class="form-control <?php echo (!empty($data['confirm_password_err']) ? 'is-invalid' : '')?> ">
-                            <span class="invalid-feedback"><?php echo $data['confirm_password_err']; ?></span>
-                        </div>
                         <input type="submit" value="Cập nhật" class="btn btn-primary btn-block">
                     </form>
         </div>

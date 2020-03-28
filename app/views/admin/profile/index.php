@@ -24,10 +24,9 @@
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
-
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800 d-inline-block">Profile</h1>
-          <a href="<?php echo URLROOT; ?>/users/add" class="btn btn-primary d-inline-block float-right"><i class="far fa-edit"></i> Edit Profile</a>
+          <a href="<?php echo URLROOT; ?>/users/profileUpdate/<?php echo $data['user']->id ?>" class="btn btn-primary d-inline-block float-right"><i class="far fa-edit"></i> Edit Profile</a>
 
           <!-- Users Profile -->
           <div class="card mb-3">
@@ -36,7 +35,7 @@
               </div>
               <div class="row no-gutters">
                 <div class="col-md-4 mt-4">
-                  <img src="<?php echo $data['user']->photo_id ? $data['user']->photo_id : AVATAR ?>" alt="..." class="img-fluid rounded p-2">
+                  <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid rounded p-2">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">

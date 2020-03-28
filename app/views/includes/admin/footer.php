@@ -51,28 +51,6 @@
   <!-- Custom scripts for all pages-->
   <script src="<?php echo URLROOT ?>/js/sb-admin-2.min.js"></script>
 
-  <!-- Script for modal -->
-  <!-- <script>
-    $(document).ready(function() {
-      $('.btn_delete').click(function(e) {
-        e.preventDefault();
-        var id = $(this).attr('data-id');
-        console.log(this);
-        $.ajax ({
-          url: 'http://localhost/smartshop/users/delete/' + id,
-          type: 'post',
-          data : {
-            id: id
-          },
-          success: function(result) {
-            $('#content').html(result);
-          }
-          
-        })
-      });
-    });
-  </script> -->
-
 
 </body>
 

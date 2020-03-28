@@ -8,6 +8,7 @@ class AdminController extends Controller {
     {
         $this->userModel = $this->model('User');
         $this->roleModel = $this->model('Role');
+        $this->photoModel = $this->model('Photo');
     }
 
     public function members()
@@ -27,7 +28,18 @@ class AdminController extends Controller {
         $user = $this->userModel->getUserById($id);
         $data = [
             'user' => $user,
+            'photo' => '',
         ];
+
+        // Check if users has avatar
+        $photo = $this->photoModel->getUserAvatar($id);
+
+        if ($photo) {
+            $data = [
+                'user' => $user,
+                'photo' => $photo->photoPath,
+            ];
+        }
 
         return $this->view('admin/profile/index', $data);
     }

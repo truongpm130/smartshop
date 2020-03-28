@@ -16,6 +16,7 @@
 
   <!-- Custom styles for this template-->
   <link href="<?php echo URLROOT ?>/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="<?php echo URLROOT ?>/css/style_admin.css" rel="stylesheet">
 
 </head>
 

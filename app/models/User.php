@@ -74,17 +74,16 @@ class User extends Database {
 
     public function update($data)
     {
-        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, password = :password WHERE id = :id');
+        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name  WHERE id = :id');
 
         $this->db->bind('first_name', $data['first_name']);
         $this->db->bind('last_name', $data['last_name']);
-        $this->db->bind('password', $data['password']);
-        $this->db->bind('id', $data['id']);
+        $this->db->bind('id', $data['id']); 
 
-        if ($this->db->execute()) {
+        $this->db->execute();
 
-        } else {
-            exit('Something went wrong!');
+        if (!$this->db->execute()) {
+            exit('Cannot update User information');
         }
 
         if (!empty($data['role'])) {
@@ -104,6 +103,51 @@ class User extends Database {
                 return $this->addRoleUser($data);
             }
         } 
+    }
+
+    public function updateProfile($id, $first_name, $last_name)
+    {
+        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name
+                            WHERE id = :id
+                        ');
+        $this->db->bind('first_name', $first_name);
+        $this->db->bind('last_name', $last_name);
+        $this->db->bind('id', $id);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public function updatePass($id, $password)
+    {
+        $this->db->query('UPDATE users SET password = :password WHERE id = :id');
+            $this->db->bind('password', $password);
+            $this->db->bind('id', $id);
+            if ($this->db->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+    }
+
+    public function checkPass($id, $password)
+    {
+        $this->db->query('SELECT * FROM users WHERE id = :id');
+        $this->db->bind('id', $id);
+        $row = $this->db->single();
+
+        if ($row) {
+            $hash_pass = $row->password;
+            if (password_verify($password,$hash_pass)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     public function addRoleUser($data)

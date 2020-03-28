@@ -24,7 +24,7 @@
 
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800 d-inline-block">Users - Add</h1>
-          <a href="<?php echo URLROOT; ?>/admin/index" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
+          <a href="<?php echo URLROOT; ?>/admin/members" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
 
           <!-- Add User -->
           <form action="<?php echo URLROOT; ?>/users/add" method="post">
