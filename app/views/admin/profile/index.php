@@ -35,7 +35,7 @@
               </div>
               <div class="row no-gutters">
                 <div class="col-md-4 mt-4">
-                  <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid rounded p-2">
+                  <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid w-75 p-3">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">

@@ -9,6 +9,7 @@ class AdminController extends Controller {
         $this->userModel = $this->model('User');
         $this->roleModel = $this->model('Role');
         $this->photoModel = $this->model('Photo');
+        $this->categoryPostModel = $this->model('CategoryPost');
     }
 
     public function members()
@@ -42,6 +43,21 @@ class AdminController extends Controller {
         }
 
         return $this->view('admin/profile/index', $data);
+    }
+
+
+    public function posts()
+    {
+        return $this->view('admin/posts/index');
+    }
+
+    public function categoriesPosts()
+    {
+        $categories = $this->categoryPostModel->getAll();
+        $data = [
+            'categories' =>$categories,
+        ];
+        return $this->view('admin/categories_posts/index', $data);
     }
 
 }

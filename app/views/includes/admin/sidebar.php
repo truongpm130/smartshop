@@ -21,27 +21,27 @@
       <!-- Nav Item - Profile -->
       <li class="nav-item">
         <a class="nav-link" href="<?php echo URLROOT; ?>/admin/profile/<?php echo $_SESSION['user_id']; ?>">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <i class="fas fa-user"></i>
           <span>Profile</span></a>
       </li>
 
       <!-- Nav Item - Members -->
       <li class="nav-item">
         <a class="nav-link" href="<?php echo URLROOT; ?>/admin/members">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <i class="fas fa-users"></i>
           <span>Members</span></a>
       </li>
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-cog"></i>
+          <i class="far fa-file"></i>
           <span>Pages</span>
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="buttons.html">Posts</a>
-            <a class="collapse-item" href="buttons.html">Category</a>
+            <a class="collapse-item" href="<?php echo URLROOT ?>/admin/posts">Posts</a>
+            <a class="collapse-item" href="<?php echo URLROOT ?>/admin/categoriesPosts">Category</a>
             <a class="collapse-item" href="cards.html">Tag</a>
           </div>
         </div>

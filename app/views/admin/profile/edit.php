@@ -30,7 +30,7 @@
                 <!-- Update Profile -->
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid rounded-circle p-2">
+                        <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid w-75 p-3">
                         <div class="text-center mt-3">
                             <form action="<?php echo URLROOT; ?>/photos/updateAvatar/<?php echo $data['user']->id ?>" method="post" enctype="multipart/form-data">
                                 <div class="form-group mb-3">
