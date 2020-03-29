@@ -58,6 +58,7 @@
     ChangeToSlug('category_name', 'category_slug');
   });
 </script>
+
 </body>
 
 </html>

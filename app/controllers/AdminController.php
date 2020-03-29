@@ -10,6 +10,7 @@ class AdminController extends Controller {
         $this->roleModel = $this->model('Role');
         $this->photoModel = $this->model('Photo');
         $this->categoryPostModel = $this->model('CategoryPost');
+        $this->postModel = $this->model('Post');
     }
 
     public function members()
@@ -42,13 +43,37 @@ class AdminController extends Controller {
             ];
         }
 
+        $_SESSION['avatar'] = $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR;
+
         return $this->view('admin/profile/index', $data);
     }
 
 
     public function posts()
     {
-        return $this->view('admin/posts/index');
+        $posts = $this->postModel->getAll();
+        
+        $authors = [];
+        $categories = [];
+
+        foreach ($posts as $post) {
+
+            // Add key: post->id, value->author in array
+            $row = $this->postModel->getAuthor($post->id);
+            $author = $row->userLastName . ' ' . $row->userFirstName;
+            $authors[$post->id] = $author;
+
+            $category = $this->postModel->getCategory($post->id);
+            $categories[$post->id] = $category->categoryName;
+            
+        }
+
+        $data = [
+            'posts' => $posts,
+            'authors' => $authors,
+            'categories' => $categories,
+        ];
+        return $this->view('admin/posts/index', $data);
     }
 
     public function categoriesPosts()

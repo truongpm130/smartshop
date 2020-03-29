@@ -14,6 +14,9 @@
   <!-- Custom fonts for this template-->
   <link href="<?php echo URLROOT ?>/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
+  <!-- CKeditor -->
+  <script src="https://cdn.ckeditor.com/ckeditor5/18.0.0/classic/ckeditor.js"></script>
+
   <!-- Custom styles for this template-->
   <link href="<?php echo URLROOT ?>/css/sb-admin-2.min.css" rel="stylesheet">
   <link href="<?php echo URLROOT ?>/css/style_admin.css" rel="stylesheet">
