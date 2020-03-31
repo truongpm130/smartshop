@@ -21,6 +21,18 @@ class Photo extends Database
         }
     }
 
+    public function getMaxId()
+    {
+        $this->db->query('SELECT MAX(id) AS maxId FROM photos');
+        $row = $this->db->single();
+
+        if ($row) {
+            return $row->maxId;
+        } else {
+            return false;
+        }
+    }
+
     public function getUserAvatar($id)
     {
         $this->db->query('SELECT users.photo_id AS photo_id,
@@ -57,6 +69,19 @@ class Photo extends Database
             }
         }
         
+    }
+
+    public function getPhoto($id)
+    {
+        $this->db->query('SELECT path FROM photos WHERE id = :id');
+        $this->db->bind('id', $id);
+        $row = $this->db->single();
+
+        if ($row) {
+            return $row->path;
+        } else {
+            return false;
+        }
     }
 
 }

@@ -25,3 +25,4 @@ define('AVATAR_USER_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images
 // Photo upload max size
 define('MAX_SIZE', '5000000');
 
+define('PRODUCT_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images/products/');

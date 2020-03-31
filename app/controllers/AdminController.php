@@ -11,6 +11,8 @@ class AdminController extends Controller {
         $this->photoModel = $this->model('Photo');
         $this->categoryPostModel = $this->model('CategoryPost');
         $this->postModel = $this->model('Post');
+        $this->categoryProductModel = $this->model('CategoryProduct');
+        $this->productModel = $this->model('Product');
     }
 
     public function members()
@@ -83,6 +85,38 @@ class AdminController extends Controller {
             'categories' =>$categories,
         ];
         return $this->view('admin/categories_posts/index', $data);
+    }
+
+    public function products()
+    {
+        $products = $this->productModel->getAll();
+
+        $categories = [];
+        $photos = [];
+
+        foreach ($products as $product) {
+
+            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+
+            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+
+        }
+        
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'photos' => $photos,
+        ];
+        return $this->view('admin/products/index', $data);
+    }
+
+    public function categoriesProducts()
+    {
+        $categories = $this->categoryProductModel->getAll();
+        $data = [
+            'categories' =>$categories,
+        ];
+        return $this->view('admin/products_categories/index', $data);
     }
 
 }
