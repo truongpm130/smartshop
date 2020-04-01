@@ -20,14 +20,14 @@
 
       <!-- Nav Item - Profile -->
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo URLROOT; ?>/admin/profile/<?php echo $_SESSION['user_id']; ?>">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/users/profile/<?php echo $_SESSION['user_id']; ?>">
           <i class="fas fa-user"></i>
           <span>Profile</span></a>
       </li>
 
       <!-- Nav Item - Members -->
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo URLROOT; ?>/admin/members">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/users/index">
           <i class="fas fa-users"></i>
           <span>Members</span></a>
       </li>
@@ -40,8 +40,8 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="<?php echo URLROOT ?>/admin/posts">Posts</a>
-            <a class="collapse-item" href="<?php echo URLROOT ?>/admin/categoriesPosts">Category</a>
+            <a class="collapse-item" href="<?php echo URLROOT ?>/posts/index">Posts</a>
+            <a class="collapse-item" href="<?php echo URLROOT ?>/categoryPost/index">Category</a>
             <a class="collapse-item" href="cards.html">Tag</a>
           </div>
         </div>
@@ -55,8 +55,8 @@
         </a>
         <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="<?php echo URLROOT ?>/admin/products">Products</a>
-            <a class="collapse-item" href="<?php echo URLROOT ?>/admin/categoriesProducts">Category</a>
+            <a class="collapse-item" href="<?php echo URLROOT ?>/products/index">Products</a>
+            <a class="collapse-item" href="<?php echo URLROOT ?>/categoryProduct/index">Category</a>
           </div>
         </div>
       </li>

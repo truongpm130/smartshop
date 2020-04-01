@@ -11,6 +11,33 @@ class PostsController extends Controller {
         $this->categoryPostModel = $this->model('CategoryPost');
     }
 
+    public function index()
+    {
+        $posts = $this->postModel->getAll();
+        
+        $authors = [];
+        $categories = [];
+
+        foreach ($posts as $post) {
+
+            // Add key: post->id, value->author in array
+            $row = $this->postModel->getAuthor($post->id);
+            $author = $row->userLastName . ' ' . $row->userFirstName;
+            $authors[$post->id] = $author;
+
+            $category = $this->postModel->getCategory($post->id);
+            $categories[$post->id] = $category->categoryName;
+            
+        }
+
+        $data = [
+            'posts' => $posts,
+            'authors' => $authors,
+            'categories' => $categories,
+        ];
+        return $this->view('admin/posts/index', $data);
+    }
+
     public function add()
     {
         $categories = $this->categoryPostModel->getAll();
@@ -43,7 +70,7 @@ class PostsController extends Controller {
             if (empty($data['title_err']) && empty($data['content_err'])) {
                 if ($this->postModel->add($data['title'], $data['slug'], $data['category'], $data['content'], $data['user_id'])) {
                     flash('message', 'Thêm bài viết thành công');
-                    redirect('admin/posts');
+                    redirect('posts/index');
                 }
             } else {
                 return $this->view('admin/posts/add', $data);
@@ -97,7 +124,7 @@ class PostsController extends Controller {
             if (empty($data['title_err']) && empty($data['content_err'])) {
                 if ($this->postModel->update($id, $data['title'], $data['slug'], $data['category'], $data['content'], $data['user_id'])) {
                     flash('message', 'Cập nhật bài viết thành công');
-                    redirect('admin/posts');
+                    redirect('posts/index');
                 }
             } else {
                 return $this->view('admin/posts/add', $data);
@@ -124,7 +151,7 @@ class PostsController extends Controller {
     {
         if ($this->postModel->delete($id)) {
             flash('message', 'Xóa bài viết thành công!');
-            redirect('admin/posts');
+            redirect('posts/index');
         } else {
             exit('Something went wrong');
         }
@@ -133,7 +160,7 @@ class PostsController extends Controller {
     public function active($id)
     {
         if ($this->postModel->active($id)) {
-            redirect('admin/posts');
+            redirect('posts/index');
         } else {
             exit('Something went wrong');
         }
@@ -142,7 +169,7 @@ class PostsController extends Controller {
     public function inactive($id)
     {
         if ($this->postModel->inactive($id)) {
-            redirect('admin/posts');
+            redirect('posts/index');
         } else {
             exit('Something went wrong');
         }

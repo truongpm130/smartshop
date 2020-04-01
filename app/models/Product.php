@@ -127,4 +127,50 @@ class Product extends Database {
             return false;
         }
     }
+
+    public function getAllOfCate($id)
+    {
+        $this->db->query('SELECT * FROM products WHERE category_id = :id');
+        $this->db->bind('id', $id);
+        $rows = $this->db->resultSet();
+
+        if ($rows) {
+            return $rows;
+        } else {
+            return false;
+        }
+    }
+
+    public function getRows()
+    {
+        $this->db->query('SELECT * FROM products');
+        $this->db->execute();
+        $rows = $this->db->rowCount();
+        
+        if ($rows) {
+            return $rows;
+        } else {
+            return false;
+        }
+        
+    }
+
+    public function pagination($skip, $result_per_page)
+    {
+
+        $this->db->query('SELECT * FROM products ORDER BY created_at DESC LIMIT :skip, :result_per_page ');
+        
+        $this->db->bind('skip', $skip);
+        $this->db->bind('result_per_page', $result_per_page);
+
+        $rows = $this->db->resultSet();
+
+        if ($rows) {
+            return $rows;
+        } else {
+            return false;
+        }
+
+    }
+
 }

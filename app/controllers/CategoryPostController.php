@@ -8,6 +8,15 @@ class CategoryPostController extends Controller {
         $this->categoryPostModel = $this->model('CategoryPost');
     }
 
+    public function index()
+    {
+        $categories = $this->categoryPostModel->getAll();
+        $data = [
+            'categories' =>$categories,
+        ];
+        return $this->view('admin/categories_posts/index', $data);
+    }
+
     public function add()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -29,7 +38,7 @@ class CategoryPostController extends Controller {
             if (empty($data['name_err'])) {
                 if ($this->categoryPostModel->add($data['name'], $data['slug'])) {
                     flash('message', 'Tạo thể loaị mới thành công');
-                    redirect('admin/categoriesPosts');
+                    redirect('categoryPost/index');
                 } else {
                     exit('Something went wrong');
                 }
@@ -69,7 +78,7 @@ class CategoryPostController extends Controller {
             if (empty($data['name_err'])) {
                 if ($this->categoryPostModel->update($id, $data['name'], $data['slug'])) {
                     flash('message', 'Tạo thể loaị mới thành công');
-                    redirect('admin/categoriesPosts');
+                    redirect('categoryPost/index');
                 } else {
                     exit('Something went wrong');
                 }
@@ -94,7 +103,7 @@ class CategoryPostController extends Controller {
     {
         if ($this->categoryPostModel->delete($id)) {
             flash('message', 'Xóa thể loại thành công');
-            redirect('admin/categoriesPosts');
+            redirect('categoryPost/index');
         } else {
             exit('Something went wrong');
         }
@@ -103,7 +112,7 @@ class CategoryPostController extends Controller {
     public function active($id)
     {
         if ($this->categoryPostModel->active($id)) {
-            redirect('admin/categoriesPosts');
+            redirect('categoryPost/index');
         } else {
             exit('Something went wrong');
         }
@@ -112,7 +121,7 @@ class CategoryPostController extends Controller {
     public function inactive($id)
     {
         if ($this->categoryPostModel->inactive($id)) {
-            redirect('admin/categoriesPosts');
+            redirect('categoryPost/index');
         } else {
             exit('Something went wrong');
         }

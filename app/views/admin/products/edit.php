@@ -24,7 +24,7 @@
 
                 <!-- Page Heading -->
                 <h1 class="h3 mb-4 text-gray-800 d-inline-block">Products - Edit</h1>
-                <a href="<?php echo URLROOT; ?>/admin/products" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href="<?php echo URLROOT; ?>/products/index" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
 
                 <!-- Edit Products -->
                 <form action="<?php echo URLROOT; ?>/products/edit/<?php echo $data['id'] ?>" method="post" enctype="multipart/form-data">

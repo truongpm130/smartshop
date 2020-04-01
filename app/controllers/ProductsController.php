@@ -10,6 +10,53 @@ class ProductsController extends Controller
         $this->photoModel = $this->model('Photo');
     }
 
+    public function index()
+    {
+        // Pagination
+
+        // Get current page or set default
+        if (isset($_GET['cur_page']) && is_numeric($_GET['cur_page'])) {
+            $cur_page = (int) $_GET['cur_page'];
+        } else {    
+            $cur_page = 1;
+        }
+        
+        // Number of rows to show per page
+        $result_per_page = LIMIT_PRODUCTS;
+
+        $skip = ($cur_page - 1)*$result_per_page;
+
+        // Total pages
+        $total = $this->productModel->getRows();
+        $num_pages = ceil($total/$result_per_page);
+
+
+        $products = $this->productModel->pagination($skip, $result_per_page);
+        $categoryAll = $this->categoryProductModel->getAll();
+
+        $categories = [];
+        $photos = [];
+
+        foreach ($products as $product) {
+
+            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+
+            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+
+        }
+        
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'photos' => $photos,
+            'category_all' => $categoryAll,
+            'num_pages' => $num_pages,
+            'cur_page' => $cur_page,
+        ];
+        
+        return $this->view('admin/products/index', $data);
+    }
+
     public function add()
     {
         $categories = $this->categoryProductModel->getAll();
@@ -109,7 +156,7 @@ class ProductsController extends Controller
                                 // Flash message
                                 flash('message', 'Tạo sản phẩm mới thành công');
 
-                                redirect('admin/products/', $data);
+                                redirect('products/index', $data);
                             } else {
                                 exit('Some thing went wrong');
                             }
@@ -238,7 +285,7 @@ class ProductsController extends Controller
                                     // Flash message
                                     flash('message', 'Cập nhật sản phẩm thành công');
 
-                                    redirect('admin/products/', $data);
+                                    redirect('products/index');
                                 } else {
                                     exit('Some thing went wrong');
                                 }
@@ -258,7 +305,7 @@ class ProductsController extends Controller
                         // Flash message
                         flash('message', 'Cập nhật sản phẩm thành công');
 
-                        redirect('admin/products/', $data);
+                        redirect('products/index', $data);
                     } else {
                         exit('Some thing went wrong');
                     }
@@ -288,7 +335,7 @@ class ProductsController extends Controller
     public function active($id)
     {
         if ($this->productModel->active($id)) {
-            redirect('admin/products');
+            redirect('products/index');
         } else {
             exit('Something went wrong');
         }
@@ -297,7 +344,7 @@ class ProductsController extends Controller
     public function inactive($id)
     {
         if ($this->productModel->inactive($id)) {
-            redirect('admin/products');
+            redirect('products/index');
         } else {
             exit('Something went wrong');
         }
@@ -307,9 +354,35 @@ class ProductsController extends Controller
     {
         if ($this->productModel->delete($id)) {
             flash('message', 'Xóa sản phẩm thành công!');
-            redirect('admin/products');
+            redirect('products/index');
         } else {
             exit('Something went wrong');
         }
+    }
+
+    public function getByCategory($id)
+    {
+        $products = $this->productModel->getAllOfCate($id);
+
+        $categoryAll = $this->categoryProductModel->getAll();
+
+        $categories = [];
+        $photos = [];
+
+        foreach ($products as $product) {
+
+            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+
+            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+
+        }
+        
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'photos' => $photos,
+            'category_all' => $categoryAll,
+        ];
+        return $this->view('admin/products/index', $data);
     }
 }

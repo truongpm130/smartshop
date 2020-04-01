@@ -9,6 +9,15 @@ class CategoryProductController extends Controller {
         $this->categoryProductModel = $this->model('CategoryProduct');
     }
 
+    public function index()
+    {
+        $categories = $this->categoryProductModel->getAll();
+        $data = [
+            'categories' =>$categories,
+        ];
+        return $this->view('admin/products_categories/index', $data);
+    }
+
     public function add()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -30,7 +39,7 @@ class CategoryProductController extends Controller {
             if (empty($data['name_err'])) {
                 if ($this->categoryProductModel->add($data['name'], $data['slug'])) {
                     flash('message', 'Tạo thể loaị mới thành công');
-                    redirect('admin/categoriesProducts');
+                    redirect('categoryProduct/index');
                 } else {
                     exit('Something went wrong');
                 }
@@ -70,7 +79,7 @@ class CategoryProductController extends Controller {
             if (empty($data['name_err'])) {
                 if ($this->categoryProductModel->update($id, $data['name'], $data['slug'])) {
                     flash('message', 'Tạo thể loaị mới thành công');
-                    redirect('admin/categoriesProducts');
+                    redirect('categoryProduct/index');
                 } else {
                     exit('Something went wrong');
                 }
@@ -95,7 +104,7 @@ class CategoryProductController extends Controller {
     {
         if ($this->categoryProductModel->delete($id)) {
             flash('message', 'Xóa thể loại thành công');
-            redirect('admin/categoriesProducts');
+            redirect('categoryProduct/index');
         } else {
             exit('Something went wrong');
         }

@@ -12,6 +12,18 @@ class UsersController extends Controller
         $this->photoModel = $this->model('Photo');
     }
 
+    public function index()
+    {
+        $users = $this->userModel->getAllUser();
+        $all_rule_user = $this->roleModel->getAllRoleUser();
+
+        $data = [
+            'users' => $users,
+            'role_user' => $all_rule_user,
+        ];
+        return $this->view('admin/users/index', $data);
+    }
+
     public function register()
     {
         // Check for Post
@@ -155,7 +167,7 @@ class UsersController extends Controller
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_email'] = $user->email;
         $_SESSION['user_name'] = $user->last_name . ' ' . $user->first_name;
-        redirect('admin/profile/' . $_SESSION['user_id']);
+        redirect('users/profile/' . $_SESSION['user_id']);
     }
 
     public function add()
@@ -206,7 +218,7 @@ class UsersController extends Controller
                 // Register User
                 if ($this->userModel->add($data)) {
                     flash('message', 'Tạo người dùng thành công!'); 
-                    redirect('admin/members');
+                    redirect('users/index');
                     
                 } else {
                     die('Something went wrong');
@@ -290,7 +302,7 @@ class UsersController extends Controller
 
                     if ($this->userModel->update($data)) {
                         flash('message', 'Cập nhật người dùng thành công');
-                        redirect('admin/members');
+                        redirect('users/index');
                     } else {
                         die('Something went wrong');
                     }
@@ -332,7 +344,7 @@ class UsersController extends Controller
                     // Register User
                     if ($this->userModel->update($data)) {
                         flash('message', ' Cập nhật thông tin thành công!');
-                        redirect('admin/members');
+                        redirect('users/index');
                         
                     } else {
                         die('Something went wrong');
@@ -352,12 +364,35 @@ class UsersController extends Controller
     {
         if ($this->userModel->delete($id)) {
             flash('message', 'Xóa người dùng thành công');
-            redirect('admin/users/index');
+            redirect('users/index');
         } else {
             exit('Something went wrong');
         }
 
         
+    }
+
+    public function profile($id)
+    {
+        $user = $this->userModel->getUserById($id);
+        $data = [
+            'user' => $user,
+            'photo' => '',
+        ];
+
+        // Check if users has avatar
+        $photo = $this->photoModel->getUserAvatar($id);
+
+        if ($photo) {
+            $data = [
+                'user' => $user,
+                'photo' => $photo->photoPath,
+            ];
+        }
+
+        $_SESSION['avatar'] = $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR;
+
+        return $this->view('admin/profile/index', $data);
     }
 
     public function profileUpdate($id)
@@ -541,7 +576,7 @@ class UsersController extends Controller
     public function active($id)
     {
         if ($this->userModel->activeUser($id)) {
-            redirect('admin/members');
+            redirect('users/index');
         } else {
             exit('Something went wrong');
         }
@@ -550,7 +585,7 @@ class UsersController extends Controller
     public function inactive($id)
     {
         if ($this->userModel->inactiveUser($id)) {
-            redirect('admin/members');
+            redirect('users/index');
         } else {
             exit('Something went wrong');
         }

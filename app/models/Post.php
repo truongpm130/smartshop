@@ -9,6 +9,7 @@ class Post extends Database {
         $this->db = new Database();
     }
 
+
     public function add($title, $slug, $category_id, $content, $user_id)
     {
         $this->db->query('INSERT INTO posts (title, slug, category_id, content, user_id)
