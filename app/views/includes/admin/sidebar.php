@@ -34,11 +34,11 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwoSide" aria-expanded="true" aria-controls="collapseTwoSide">
           <i class="far fa-file"></i>
           <span>Pages</span>
         </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseTwoSide" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="<?php echo URLROOT ?>/posts/index">Posts</a>
             <a class="collapse-item" href="<?php echo URLROOT ?>/categoryPost/index">Category</a>
@@ -49,16 +49,23 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThreeSide" aria-expanded="true" aria-controls="collapseThreeSide">
           <i class="far fa-lightbulb"></i>
           <span>Products</span>
         </a>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseThreeSide" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="<?php echo URLROOT ?>/products/index">Products</a>
             <a class="collapse-item" href="<?php echo URLROOT ?>/categoryProduct/index">Category</a>
           </div>
         </div>
+      </li>
+
+      <!-- Nav Item - Medias -->
+      <li class="nav-item">
+        <a class="nav-link" href="<?php echo URLROOT; ?>/photos/index">
+          <i class="fas fa-photo-video"></i>
+          <span>Medias</span></a>
       </li>
 
       <!-- Sidebar Toggler (Sidebar) -->

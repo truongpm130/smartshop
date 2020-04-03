@@ -30,16 +30,14 @@ class UsersController extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Process form
 
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
             // Init data
             $data = [
-                'first_name' => trim($_POST['first_name']),
-                'last_name' => trim($_POST['last_name']),
-                'email' => trim($_POST['email']),
-                'password' => trim($_POST['password']),
-                'confirm_password' => trim($_POST['confirm_password']),
+                'first_name' => test_input($_POST['first_name']),
+                'last_name' => test_input($_POST['last_name']),
+                'email' => test_input($_POST['email']),
+                'password' => test_input($_POST['password']),
+                'confirm_password' => test_input($_POST['confirm_password']),
+                'gender' => $_POST['gender'],
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'email_err' => '',
@@ -422,7 +420,7 @@ class UsersController extends Controller
                 // Update profile
                 if ($this->userModel->updateProfile($id, $data['first_name'], $data['last_name'])) {
                     flash('message', 'Cập nhật người dùng thành công');
-                    redirect('/admin/profile/'. $id);
+                    redirect('/users/profile/'. $id);
                 } else {
                     exit('Something went wrong');
                 }
@@ -450,18 +448,66 @@ class UsersController extends Controller
         }
     }
 
+    public function updateAvatar($id)
+    {
+
+        if (isset($_POST['update_file'])) {
+
+            // specifies the directory where the file is going to be placed
+            $target_dir = AVATAR_USER_FOLDER;
+
+            // Get user by id
+            $user = $this->userModel->getUserById($id);
+            // Check if users has avatar
+            $photo = $this->photoModel->getUserAvatar($id);
+
+            if ($photo) {
+                $data = [
+                    'user' => $user,
+                    'photo' => $photo->photoPath,
+                ];
+            }
+
+            $data['file_err'] = [];
+
+            try {
+                $loader = new Upload($target_dir);
+                $loader->upload('file', MAX_SIZE);
+                $data['file_err'] = $loader->getMessages();
+                $status = $loader->getStatus();
+                $name = $loader->getName($_FILES['file']);
+
+                if ($status) {
+                    // Insert photo tables, update users table
+                    if ($this->photoModel->updateUserAvatar($id, $name)) {
+
+                        // Flash message
+                        flash('message', 'Your avatar is updated!');
+
+                        redirect('users/profile/' . $data['user']->id, $data);
+                    } else {
+                        exit('something went wrong');
+                    }
+                } else {
+                    return $this->view('admin/profile/edit', $data);
+                }
+            } catch (Throwable $t) {
+                echo $t->getMessage();
+            }
+        }
+
+    }
+
 
     public function changePass($id)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             //  init data
             $data = [
-                'password' => $_POST['password'],
-                'new_password' => $_POST['new_password'],
-                'confirm_new_password' => $_POST['confirm_new_password'],
+                'password' => test_input($_POST['password']),
+                'new_password' => test_input($_POST['new_password']),
+                'confirm_new_password' => test_input($_POST['confirm_new_password']),
                 'password_err' => '',
                 'new_password_err' =>  '',
                 'confirm_new_password_err' => '',
@@ -493,7 +539,7 @@ class UsersController extends Controller
                 // Update new password
                 if ($this->userModel->updatePass($id, $data['new_password'])) {
                     flash('message','Cập nhật người dùng thành công');
-                    redirect('/admin/profile/'. $id);
+                    redirect('/users/profile/'. $id);
                 }
             } else {
                 $this->view('/admin/profile/change_pass', $data);
@@ -512,19 +558,19 @@ class UsersController extends Controller
 
     public function validateName($first_name, $last_name)
     {
-        $data = [
-            $data['first_name_err'] = '',
-            $data['last_name_err'] = '',
+        $msg = [
+            'first_name_err' => '',
+            'last_name_err' => '',
         ];
         if (empty($first_name)) {
-            $data['first_name_err'] = 'Vui lòng nhập tên bạn';
+            $msg['first_name_err'] = 'Vui lòng nhập tên bạn';
         }
 
         if (empty($last_name)) {
-            $data['last_name_err'] = 'Vui lòng nhập họ của bạn';
+            $msg['last_name_err'] = 'Vui lòng nhập họ của bạn';
         }
         
-        return $data;
+        return $msg;
     }
 
     public function validateEmail($email)

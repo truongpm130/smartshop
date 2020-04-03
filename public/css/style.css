@@ -35,3 +35,44 @@ body {
 }
 
 
+/* The message box is shown when the user clicks on the password field */
+#message {
+    display:none;
+    color: #000;
+    position: relative;
+    padding: 20px;
+    margin-top: 5px;
+    margin-left: 50px;
+}
+
+#message p {
+    font-size: 14px;
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+color: green;
+}
+
+.valid:before {
+position: relative;
+left: -20px;
+content: "✔";
+}
+
+/* Add a red text color and an "x" when the requirements are wrong */
+.invalid {
+color: red;
+}
+
+.invalid:before {
+position: relative;
+left: -35px;
+content: "✖";
+}
+
+#conf_msg {
+    margin-left: 50px;
+    margin-top: 15px;
+}
+

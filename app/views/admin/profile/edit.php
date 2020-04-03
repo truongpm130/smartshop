@@ -25,18 +25,23 @@
                 <!-- Page Heading -->
                 <h1 class="h3 mb-4 text-gray-800 d-inline-block">Profile - Edit</h1>
 
-                <a href="<?php echo URLROOT; ?>/admin/profile/<?php echo $data['user']->id; ?>" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href="<?php echo URLROOT; ?>/users/profile/<?php echo $data['user']->id; ?>" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
 
                 <!-- Update Profile -->
                 <div class="row">
                     <div class="col-md-4">
                         <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid w-75 p-3">
                         <div class="text-center mt-3">
-                            <form action="<?php echo URLROOT; ?>/photos/updateAvatar/<?php echo $data['user']->id ?>" method="post" enctype="multipart/form-data">
+                            <form action="<?php echo URLROOT; ?>/users/updateAvatar/<?php echo $data['user']->id ?>" method="post" enctype="multipart/form-data">
                                 <div class="form-group mb-3">
                                     <label for='file'>Change your avatar</label>
                                     <input type="file" name="file">
-                                    <span class="text-small text-danger"><?php echo isset($data['file_err']) ? $data['file_err'] : ''; ?></span>
+
+                                    <?php if(!empty($data['file_err'])) :?>
+                                    <?php foreach($data['file_err'] as $msg) :?>
+                                    <span class="text-small text-danger"><?php echo $msg . '<br>'; ?></span>
+                                    <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </div>
                                 
                                 <input type="submit" value="Save avatar" class="btn btn-success btn-block" name="update_file">

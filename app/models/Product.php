@@ -173,4 +173,42 @@ class Product extends Database {
 
     }
 
+    public function search($input)
+    {
+        $this->db->query('SELECT * FROM products WHERE name LIKE :input');
+        $this->db->bind('input', $input);
+        $rows = $this->db->resultSet();
+
+        if ($rows) {
+            return $rows;
+        } else {
+            return false;
+        }
+        
+    }
+
+    public function priceDesc()
+    {
+        $this->db->query('SELECT * FROM products ORDER BY price DESC');
+        $rows = $this->db->resultSet();
+
+        if ($rows) {
+            return $rows;
+        } else {
+            return false;
+        }
+    }
+
+    public function priceAsc()
+    {
+        $this->db->query('SELECT * FROM products ORDER BY price ASC');
+        $rows = $this->db->resultSet();
+
+        if ($rows) {
+            return $rows;
+        } else {
+            return false;
+        }
+    }
+
 }

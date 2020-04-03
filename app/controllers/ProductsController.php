@@ -53,7 +53,7 @@ class ProductsController extends Controller
             'num_pages' => $num_pages,
             'cur_page' => $cur_page,
         ];
-        
+
         return $this->view('admin/products/index', $data);
     }
 
@@ -385,4 +385,96 @@ class ProductsController extends Controller
         ];
         return $this->view('admin/products/index', $data);
     }
+
+    public function search()
+    {
+        $input = $_POST['search'];
+        $input = '%'. $input . '%';
+
+        $products = $this->productModel->search($input);
+
+        $categoryAll = $this->categoryProductModel->getAll();
+
+        $categories = [];
+        $photos = [];
+
+        foreach ($products as $product) {
+
+            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+
+            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+
+        }
+        
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'photos' => $photos,
+            'category_all' => $categoryAll,
+            'num_pages' => '',
+            'cur_page' => '',
+        ];
+
+        return $this->view('admin/products/index', $data);
+
+    }
+
+    public function priceDesc()
+    {
+        $products = $this->productModel->priceDesc();
+
+        $categoryAll = $this->categoryProductModel->getAll();
+
+        $categories = [];
+        $photos = [];
+
+        foreach ($products as $product) {
+
+            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+
+            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+
+        }
+        
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'photos' => $photos,
+            'category_all' => $categoryAll,
+            'num_pages' => '',
+            'cur_page' => '',
+        ];
+
+        return $this->view('admin/products/index', $data);
+    }
+
+    public function priceAsc()
+    {
+        $products = $this->productModel->priceAsc();
+
+        $categoryAll = $this->categoryProductModel->getAll();
+
+        $categories = [];
+        $photos = [];
+
+        foreach ($products as $product) {
+
+            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+
+            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+
+        }
+        
+        $data = [
+            'products' => $products,
+            'categories' => $categories,
+            'photos' => $photos,
+            'category_all' => $categoryAll,
+            'num_pages' => '',
+            'cur_page' => '',
+        ];
+
+        return $this->view('admin/products/index', $data);
+    }
+
 }

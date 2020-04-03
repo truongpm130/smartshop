@@ -49,7 +49,6 @@ class Photo extends Database
         } else {
             return false;
         }
-
     }
 
     public function updateUserAvatar($id, $path)
@@ -68,7 +67,6 @@ class Photo extends Database
                 }
             }
         }
-        
     }
 
     public function getPhoto($id)
@@ -84,4 +82,39 @@ class Photo extends Database
         }
     }
 
+    public function getAllProductPhoto()
+    {
+        $this->db->query('SELECT photos.path as photoPath,
+                            photos.created_at as photoCreatedAt
+                            FROM photos
+                            INNER JOIN products
+                            ON products.photo_id = photos.id
+                            ORDER BY photos.created_at DESC
+                         ');
+        $row = $this->db->resultSet();
+
+        if ($row) {
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
+    public function getAllUserPhoto()
+    {
+        $this->db->query('SELECT photos.path as photoPath,
+                            photos.created_at as photoCreatedAt
+                            FROM photos
+                            INNER JOIN users
+                            ON users.photo_id = photos.id
+                            ORDER BY photos.created_at DESC
+                         ');
+        $row = $this->db->resultSet();
+
+        if ($row) {
+            return $row;
+        } else {
+            return false;
+        }
+    }
 }

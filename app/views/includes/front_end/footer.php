@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="row bg-dark p-4 text-white">
-        Copyright &copy; 2020 by SmartShop
+        Copyright &copy; <?php echo date('Y') ?> by SmartShop
       </div>
     </div>
   </footer>
@@ -66,6 +66,9 @@
 
   <!-- Font Awesome -->
   <script src="<?php echo URLROOT?>/js/all.min.js"></script>
+
+  <!-- Custom Js -->
+  <script src="<?php echo URLROOT?>/js/script.js"></script>
 </body>
 
 </html>

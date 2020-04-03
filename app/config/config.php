@@ -23,10 +23,13 @@ define('AVATAR', URLROOT . '/images/users/avatar.png');
 define('AVATAR_USER_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images/users/');
 
 // Photo upload max size
-define('MAX_SIZE', '5000000');
+define('MAX_SIZE', 102400);
 
 // Library for product photos
 define('PRODUCT_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images/products/');
 
+// Library for homepage photos
+define('HOMEPAGE_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images/homepage/' );
+
 // Products show in one page
-define('LIMIT_PRODUCTS', 5);
+define('LIMIT_PRODUCTS', 10);

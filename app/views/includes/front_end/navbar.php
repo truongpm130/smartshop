@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto text-uppercase">
             <li class="nav-item">
-              <a class="nav-link" href="#"><i class="fa fa-mobile fa-lg"></i> - Điện Thoại</a>
+              <a class="nav-link" href="#"><i class="fa fa-mobile fa-lg"></i> - Smartphone</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fa fa-tablet fa-lg"></i> - Tablet</a>
@@ -44,10 +44,10 @@
             </li>
             <?php else : ?>
             <li class="nav-item">            
-              <a href="<?php echo URLROOT; ?>/users/login" class="nav-link"">Đăng nhập</a>
+              <a href="<?php echo URLROOT; ?>/users/login" class="nav-link"">Login</a>
             </li>
             <li class="nav-item">
-              <a href="<?php echo URLROOT; ?>/users/register" class="nav-link">Đăng ký</a>
+              <a href="<?php echo URLROOT; ?>/users/register" class="nav-link">Register</a>
             </li>
             <?php endif;?>
           </ul>

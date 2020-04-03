@@ -11,26 +11,26 @@
             <div class="card">
                 <div class="card-header text-center">
                     <h4>SmartShop</h4>
-                    <h5>Đăng nhập</h5>
+                    <h5>Login</h5>
                 </div>
                 <div class="card-body">
                     <form action="<?php echo URLROOT; ?>/users/login" method="post">
                         <div class="form-group">
                             <label for="email">Email: </label>
-                            <input type="text" name="email" id="" class="form-control <?php echo (!empty($data['email_err']) ? 'is-invalid' : '')?>" value="<?php echo $data['email']; ?>">
+                            <input type="text" name="email" id="" class="form-control <?php echo (!empty($data['email_err']) ? 'is-invalid' : '')?>" value="<?php echo $data['email']; ?>" required>
                             <span class="invalid-feedback"><?php echo $data['email_err']; ?></span>
                         </div>
                         <div class="form-group">
-                            <label for="password">Mật khẩu: </label>
-                            <input type="password" name="password" id="" class="form-control <?php echo (!empty($data['password_err']) ? 'is-invalid' : '')?>">
+                            <label for="password">Password: </label>
+                            <input type="password" name="password" id="" class="form-control <?php echo (!empty($data['password_err']) ? 'is-invalid' : '')?>" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Password must contain at least one number, one uppercase and lowercase letter, and at lest 6 characters " required>
                             <span class="invalid-feedback"><?php echo $data['password_err']; ?></span>
                         </div>
                         <div class="row">
                             <div class="col">
-                                <input type="submit" value="Đăng Nhập" class="btn btn-primary btn-block">
+                                <input type="submit" value="Login" class="btn btn-primary btn-block">
                             </div>
                             <div class="col">
-                                <button class="btn btn-light btn-block text-muted">Bạn chưa có tài khoản?</button>
+                                <button class="btn btn-light btn-block text-muted">You don't have an account?</button>
                             </div>
                         </div>
 

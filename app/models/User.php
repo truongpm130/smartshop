@@ -12,13 +12,14 @@ class User extends Database {
     // Register User
     public function register($data)
     {
-        $this->db->query('INSERT INTO users (first_name, last_name, email, password) VAlUES (:first_name, :last_name, :email, :password)');
+        $this->db->query('INSERT INTO users (first_name, last_name, email, password, gender) VAlUES (:first_name, :last_name, :email, :password, :gender)');
 
         // Bind values
         $this->db->bind(':first_name', $data['first_name']);
         $this->db->bind(':last_name', $data['last_name']);
         $this->db->bind(':email', $data['email']);
         $this->db->bind(':password', $data['password']);
+        $this->db->bind(':gender', $data['gender']);
 
         // Execute
         if ($this->db->execute()) {
