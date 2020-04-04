@@ -52,13 +52,13 @@
                         <form action="<?php echo URLROOT; ?>/users/profileUpdate/<?php echo $data['user']->id; ?>" method="post">   
                             <div class="row">
                                 <div class="form-group col">
-                                    <label for="first_name">Tên: </label>
-                                    <input type="text" name="first_name" id="" class="form-control <?php echo (!empty($data['first_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->first_name; ?>">
-                                    <span class="invalid-feedback"><?php echo $data['first_name_err']; ?></span>
+                                    <label for="first_name">First Name: </label>
+                                    <input type="text" name="first_name" id="" class="form-control <?php echo (!empty($data['first_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->first_name; ?>" required>
+                                    <span class="invalid-feedback"><?php echo $data['first_name_err'];?></span>
                                 </div>
                                 <div class="form-group col">
-                                    <label for="last_name">Họ: </label>
-                                    <input type="text" name="last_name" id="" class="form-control <?php echo (!empty($data['last_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->last_name; ?>">
+                                    <label for="last_name"></label>Last Name: </label>
+                                    <input type="text" name="last_name" id="" class="form-control <?php echo (!empty($data['last_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->last_name; ?>" required>
                                     <span class="invalid-feedback"><?php echo $data['last_name_err']; ?></span>
                                 </div>
 

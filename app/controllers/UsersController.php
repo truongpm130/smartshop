@@ -4,6 +4,7 @@ class UsersController extends Controller
 {
 
     private $userModel;
+    protected $registerMsg = [];
 
     public function __construct()
     {
@@ -45,28 +46,22 @@ class UsersController extends Controller
                 'confirm_password_err' => '',
             ];
 
-            // Validate Name
-            $name_errors = $this->validateName($data['first_name'], $data['last_name']);
+            // Validate Register Input
+            $result = $this->validateRegisterInput($data);
 
-            // Validate Email
-            $email_errors = $this->validateEmail($data['email']);
-
-            // Validate Password
-            $pass_errors = $this->validatePassword($data['password'], $data['confirm_password']);
-            $data = array_merge($data, $name_errors ,$email_errors, $pass_errors);
+            $data = array_merge($data, $this->registerMsg);
 
 
             // Make sure errors are empty
-            if (empty($data['first_name_err']) && empty($data['last_name_err']) && empty($data['email_err']) && empty($data['password_err']) && empty($data['confirm_password_err'])) {
+            if ($result) {
 
                 // Hash password
                 $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
                 // Register User
                 if ($this->userModel->register($data)) {
-                    flash('message', 'Bạn đã đăng ký thành công!'); 
+                    flash('message', 'Register success!');
                     redirect('users/login');
-                    
                 } else {
                     die('Something went wrong');
                 }
@@ -99,46 +94,42 @@ class UsersController extends Controller
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            
-            // Sanitize post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             // Init data
             $data = [
-                'email' => trim($_POST['email']),
-                'password' => trim($_POST['password']),
+                'email' => test_input($_POST['email']),
+                'password' => test_input($_POST['password']),
                 'email_err' => '',
                 'password_err' => ''
             ];
 
+            $validate = new Validate();
+
             // Validate email
-            if (empty($data['email'])) {
-                $data['email_err'] = 'Vui lòng nhập địa chỉ email';
-            } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-                $data['email_err'] = 'Địa chỉ email không hợp lệ';
-            }
+            $checkEmail = $validate->validateEmail($data['email']);
+            
 
             // Validate password
-            if (empty($data['password'])) {
-                $data['password_err'] = 'Vui lòng nhập mật khẩu';
-            }
+            $checkPass = $validate->validatePass($data['password']);
 
-            if (empty($data['email_err']) && empty($data['password_err'])) {
-                
+            $msg = $validate->getMsg();
+            $data = array_merge($data, $msg);
+
+            if ($checkEmail && $checkPass) {
+
                 // Check and set logged user
                 $loggedInUser = $this->userModel->login($data['email'], $data['password']);
 
                 if ($loggedInUser) {
                     $this->createUserSession($loggedInUser);
                 } else {
-                    $data['password_err'] = 'Email hoăc mật khẩu không chính xác';
+                    $data['password_err'] = 'Email or password is not correct';
                     $this->view('pages/login', $data);
                 }
             } else {
                 // Load view with errors
                 $this->view('pages/login', $data);
             }
-
         } else {
             $data = [
                 'email' => '',
@@ -175,16 +166,14 @@ class UsersController extends Controller
         // Check for Post
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Process form
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             // Init data
             $data = [
-                'first_name' => trim($_POST['first_name']),
-                'last_name' => trim($_POST['last_name']),
-                'email' => trim($_POST['email']),
-                'password' => trim($_POST['password']),
-                'confirm_password' => trim($_POST['confirm_password']),
+                'first_name' => test_input($_POST['first_name']),
+                'last_name' => test_input($_POST['last_name']),
+                'email' => test_input($_POST['email']),
+                'password' => test_input($_POST['password']),
+                'confirm_password' => test_input($_POST['confirm_password']),
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'email_err' => '',
@@ -192,19 +181,15 @@ class UsersController extends Controller
                 'confirm_password_err' => '',
             ];
 
-            // Validate Name
-            $name_errors = $this->validateName($data['first_name'], $data['last_name']);
+            // Validate Register Input
+            // Validate Register Input
+            $result = $this->ValidateRegisterInput($data);
 
-            // Validate Email
-            $email_errors = $this->validateEmail($data['email']);
+            $data = array_merge($data, $this->registerMsg);
 
-            // Validate Password
-            $pass_errors = $this->validatePassword($data['password'], $data['confirm_password']);
-            $data = array_merge($data, $name_errors ,$email_errors, $pass_errors);
-            
 
             // Make sure errors are empty
-            if (empty($data['first_name_err']) && empty($data['last_name_err']) && empty($data['email_err']) && empty($data['password_err']) && empty($data['confirm_password_err'])) {
+            if ($result) {
 
                 // Hash password
                 $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -215,9 +200,8 @@ class UsersController extends Controller
 
                 // Register User
                 if ($this->userModel->add($data)) {
-                    flash('message', 'Tạo người dùng thành công!'); 
+                    flash('message', 'Add user success');
                     redirect('users/index');
-                    
                 } else {
                     die('Something went wrong');
                 }
@@ -249,6 +233,43 @@ class UsersController extends Controller
         }
     }
 
+    public function ValidateRegisterInput($data)
+    {
+        // Validate Register Input   
+        $validate = new Validate();
+
+        // Validate name
+        $validateFirstName = $validate->validateFirstName($data['first_name']);
+        $validateLastName = $validate->validateLastName($data['last_name']);
+
+        // Validate Email
+        $validateEmail = $validate->validateEmail($data['email']);
+
+        if ($this->userModel->findUserByEmail($data['email'])) {
+            $emailError = 'This email has been taken, please choose other email address';
+            $validateEmail = false;
+        }
+
+        // Validate Password
+        $validatePass = $validate->validatePass($data['password']);
+        $validateConfPass = $validate->validateConfPass($data['password'], $data['confirm_password']);
+
+        
+        $msg = $validate->getMsg();
+        if (!empty($emailError)) {
+            $msg['email_err'] = $emailError;
+        }
+        $this->registerMsg = $msg;
+
+        // Make sure errors are empty
+        if ($validateFirstName && $validateLastName && $validateEmail && $validatePass && $validateConfPass) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     public function edit($id)
     {
         $user = $this->userModel->getUserById($id);
@@ -272,16 +293,13 @@ class UsersController extends Controller
         // Check for Post
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Process form
-        
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             if (empty($_POST['password']) && empty($_POST['confirm_password'])) {
 
                 // Init data
                 $data = [
-                    'first_name' => trim($_POST['first_name']),
-                    'last_name' => trim($_POST['last_name']),
+                    'first_name' => test_input($_POST['first_name']),
+                    'last_name' => test_input($_POST['last_name']),
                     'password' => $user->password,
                     'first_name_err' => '',
                     'last_name_err' => '',
@@ -293,13 +311,19 @@ class UsersController extends Controller
                 }
 
                 // Validate Name
-                $name_errors = $this->validateName($data['first_name'], $data['last_name']);
-                $data = array_merge($data, $name_errors);
+                $validate = new Validate();
 
-                if (empty($data['first_name_err']) && empty($data['last_name_err'])) {
+                $checkfName = $validate->validateFirstName($data['first_name']);
+                $checklName = $validate->validateLastName($data['last_name']);
+                
+                $msg = $validate->getMsg();
+                
+                $data = array_merge($data, $msg);
+
+                if ($checkfName && $checklName) {
 
                     if ($this->userModel->update($data)) {
-                        flash('message', 'Cập nhật người dùng thành công');
+                        flash('message', 'Update user success');
                         redirect('users/index');
                     } else {
                         die('Something went wrong');
@@ -310,14 +334,13 @@ class UsersController extends Controller
                     $data['roles'] = $roles;
                     return $this->view('admin/users/edit', $data);
                 }
-
             } else {
                 // Init data
                 $data = [
-                    'first_name' => trim($_POST['first_name']),
-                    'last_name' => trim($_POST['last_name']),
-                    'password' => trim($_POST['password']),
-                    'confirm_password' => trim($_POST['confirm_password']),
+                    'first_name' => test_input($_POST['first_name']),
+                    'last_name' => test_input($_POST['last_name']),
+                    'password' => test_input($_POST['password']),
+                    'confirm_password' => test_input($_POST['confirm_password']),
                     'first_name_err' => '',
                     'last_name_err' => '',
                     'password_err' => '',
@@ -326,24 +349,29 @@ class UsersController extends Controller
                 ];
 
                 // Validate Name
-                $name_errors = $this->validateName($data['first_name'], $data['last_name']);
+                $validate = new Validate();
+
+                $checkfName = $validate->validateFirstName($data['first_name']);
+                $checklName = $validate->validateLastName($data['last_name']);
 
                 // Validate Password
-                $pass_errors = $this->validatePassword($data['password'], $data['confirm_password']);
-
-                $data = array_merge($data, $name_errors, $pass_errors);
+                $checkPass = $validate->validatePass($data['password']);
+                $checkCfPass = $validate->validateConfPass($data['password'], $data['confirm_password']);
+                
+                $msg = $validate->getMsg();
+                
+                $data = array_merge($data, $msg);
 
                 // Make sure errors are empty
-                if (empty($data['first_name_err']) && empty($data['last_name_err']) && empty($data['password_err']) && empty($data['confirm_password_err'])) {
+                if ($checkfName && $checklName && $checkPass && $checkCfPass) {
 
                     // Hash password
                     $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
                     // Register User
                     if ($this->userModel->update($data)) {
-                        flash('message', ' Cập nhật thông tin thành công!');
+                        flash('message', ' Update user success!');
                         redirect('users/index');
-                        
                     } else {
                         die('Something went wrong');
                     }
@@ -361,13 +389,11 @@ class UsersController extends Controller
     public function delete($id)
     {
         if ($this->userModel->delete($id)) {
-            flash('message', 'Xóa người dùng thành công');
+            flash('message', 'Delete user success');
             redirect('users/index');
         } else {
             exit('Something went wrong');
         }
-
-        
     }
 
     public function profile($id)
@@ -399,28 +425,32 @@ class UsersController extends Controller
         $photo = $this->photoModel->getUserAvatar($id);
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
+            
             // Init data
             $data = [
-                'first_name' => trim($_POST['first_name']),
-                'last_name' => trim($_POST['last_name']),
+                'first_name' => test_input($_POST['first_name']),
+                'last_name' => test_input($_POST['last_name']),
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'id' => $id,
                 'user' => $user,
             ];
 
-            $errors = $this->validateName($data['first_name'], $data['last_name']);
-            $data = array_merge($data, $errors);
+            $validate = new Validate();
 
-            if (empty($data['first_name_err']) && empty($data['last_name_err'])) {
+            $checkfName = $validate->validateFirstName($data['first_name']);
+            $checklName = $validate->validateLastName($data['last_name']);
+
+            $msg = $validate->getMsg();
+
+            $data = array_merge($data, $msg);
+
+            if ($checkfName && $checklName) {
 
                 // Update profile
                 if ($this->userModel->updateProfile($id, $data['first_name'], $data['last_name'])) {
-                    flash('message', 'Cập nhật người dùng thành công');
-                    redirect('/users/profile/'. $id);
+                    flash('message', 'Update user success');
+                    redirect('/users/profile/' . $id);
                 } else {
                     exit('Something went wrong');
                 }
@@ -443,8 +473,8 @@ class UsersController extends Controller
                     'photo' => $photo->photoPath,
                 ];
             }
-            
-            return $this->view('/admin/profile/edit', $data);            
+
+            return $this->view('/admin/profile/edit', $data);
         }
     }
 
@@ -495,7 +525,6 @@ class UsersController extends Controller
                 echo $t->getMessage();
             }
         }
-
     }
 
 
@@ -517,34 +546,40 @@ class UsersController extends Controller
 
             // Check password
             if (empty($data['password'])) {
-                $data['password_err'] = 'Vui lòng nhập mật khẩu';
+                $data['password_err'] = 'Please enter password';
+                $checkOldPass = false;
             } else {
                 if (!$this->userModel->checkPass($id, $data['password'])) {
-                    $data['password_err'] = 'Mật khẩu không đúng';
-                } 
-                ;
+                    $data['password_err'] = 'Password is not correct';
+                    $checkOldPass = false;
+                } else {
+                    $checkOldPass = true;
+                }
             }
 
             // Check new pass
-            $errors = $this->validatePassword($data['new_password'], $data['confirm_new_password']);
+            $validate = new Validate();
+            $checkPass = $validate->validatePass($data['new_password']);
+            $checkCofPass = $validate->validateConfPass($data['new_password'], $data['confirm_new_password']);
 
-            $data['new_password_err'] = $errors['password_err'];
-            $data['confirm_new_password_err'] = $errors['confirm_password_err'];
+            $msg = $validate->getMsg();
 
-            if (empty($data['password_err']) && empty($data['new_password_err']) && empty($data['confirm_new_pass_err'])) {
+            $data['new_password_err'] = $msg['password_err'];
+            $data['confirm_new_password_err'] = $msg['confirm_password_err'];
+
+            if ($checkOldPass && $checkPass && $checkCofPass) {
 
                 // Hash password
                 $data['new_password'] = password_hash($data['new_password'], PASSWORD_DEFAULT);
 
                 // Update new password
                 if ($this->userModel->updatePass($id, $data['new_password'])) {
-                    flash('message','Cập nhật người dùng thành công');
-                    redirect('/users/profile/'. $id);
+                    flash('message', 'Update password success');
+                    redirect('/users/profile/' . $id);
                 }
             } else {
                 $this->view('/admin/profile/change_pass', $data);
             }
-
         } else {
             $data = [
                 'pass_err' => '',
@@ -555,69 +590,6 @@ class UsersController extends Controller
         }
     }
 
-
-    public function validateName($first_name, $last_name)
-    {
-        $msg = [
-            'first_name_err' => '',
-            'last_name_err' => '',
-        ];
-        if (empty($first_name)) {
-            $msg['first_name_err'] = 'Vui lòng nhập tên bạn';
-        }
-
-        if (empty($last_name)) {
-            $msg['last_name_err'] = 'Vui lòng nhập họ của bạn';
-        }
-        
-        return $msg;
-    }
-
-    public function validateEmail($email)
-    {
-        $data = [
-            $data['emal_err'] = '',
-        ];
-
-        if (empty($email)) {
-            $data['email_err'] = 'Vui lòng nhập địa chỉ email';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $data['email_err'] = 'Địa chỉ email không hợp lệ';
-        } else {
-            // Check unique email
-            if ($this->userModel->findUserByEmail($email)) {
-                $data['email_err'] = 'Địa chỉ email này đã được dùng, vui lòng nhập địa chỉ email khác ';
-            }
-        }
-        
-        return $data;
-    }
-
-    public function validatePassword($pass, $confirm_pass)
-    {
-        $data = [
-            'password_err' => '',
-            'confirm_password_err' => '',
-        ];
-
-        // Validate Password
-        if (empty($pass)) {
-            $data['password_err'] = 'Vui lòng nhập mật khẩu';;
-        } elseif (strlen($pass) < 6) {
-            $data['password_err'] = 'Mật khẩu phải tối thiểu 6 ký tự';
-        }
-
-        // Validate confirm password
-        if (empty($confirm_pass)) {
-            $data['confirm_password_err'] = 'Vui lòng xác thực lại mật khẩu';
-        } else {
-            if ($pass !== $confirm_pass) {
-                $data['confirm_password_err'] = 'Mật khẩu xác nhận không khớp, vui lòng nhập lại';
-            }
-        }
-
-        return $data;
-    }
 
     public function active($id)
     {
@@ -636,5 +608,4 @@ class UsersController extends Controller
             exit('Something went wrong');
         }
     }
-
 }

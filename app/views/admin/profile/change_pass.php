@@ -32,12 +32,12 @@
                         <form action="" method="post">
                             <div class="form-group">
                                 <label for="password">Current Password: </label>
-                                <input type="password" name="password" id="" class="form-control <?php echo $data['password_err'] ? 'is-invalid' : '' ?>">
+                                <input type="password" name="password" id="" class="form-control <?php echo $data['password_err'] ? 'is-invalid' : '' ?>" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Password must contain at least one number, one uppercase and lowercase letter, and at lest 6 characters" required>
                                 <span class="invalid-feedback"> <?php echo $data['password_err'] ?></span>
                             </div>
                             <div class="form-group">
                                 <label for="new_password">New Password: </label>
-                                <input type="password" name="new_password" id="" class="form-control <?php echo $data['new_password_err'] ? 'is-invalid' : '' ?>">
+                                <input type="password" name="new_password" id="" class="form-control <?php echo $data['new_password_err'] ? 'is-invalid' : '' ?>" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Password must contain at least one number, one uppercase and lowercase letter, and at lest 6 characters" required>
                                 <span class="invalid-feedback"> <?php echo $data['new_password_err'] ?></span>
                             </div>
                             <div class="form-group">

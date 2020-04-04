@@ -8,6 +8,8 @@ var length = document.getElementById("length");
 var confPsw = document.getElementById('conf_psw');
 var confMsg = document.getElementById('conf_msg');
 
+var allowSubmit = false;
+
 // When the user clicks on the password field, show the message box
 myInput.onfocus = function() {
   document.getElementById("message").style.display = "block";
@@ -65,10 +67,22 @@ confPsw.addEventListener('keyup', function() {
         confMsg.textContent = 'Confirm pass is ok';
         confMsg.classList.remove('invalid');
         confMsg.classList.add('valid');
+        allowSubmit = true;
+        
     } else {
         confMsg.textContent = 'Confirm pass is not match';
         confMsg.classList.remove('valid');
         confMsg.classList.add('invalid');
     }
+});
+
+document.querySelector('#reg_btn').addEventListener('click', function(e){
+  if (!allowSubmit) {
+    e.preventDefault();
+
+    if (confPsw.value == myInput.value) {
+      allowSubmit = true;
+    }
+  }
 });
 
