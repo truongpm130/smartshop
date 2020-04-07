@@ -10,10 +10,6 @@ require_once 'helpers/string_helper.php';
 
 require_once 'helpers/time_helper.php';
 
-require_once 'helpers/Upload.php';
-
-require_once 'helpers/Validate.php';
-
 // Auto load libraries
 spl_autoload_register(function($className) {
     require_once 'libraries/' . $className . '.php';

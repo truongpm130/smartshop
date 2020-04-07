@@ -501,8 +501,9 @@ class UsersController extends Controller
             $data['file_err'] = [];
 
             try {
-                $loader = new Upload($target_dir);
-                $loader->upload('file', MAX_SIZE);
+                $loader = new ThumbnailUpload($target_dir, true);
+                $loader->setThumbOptions($target_dir, MAX_SIZE);
+                $loader->upload('file', 100000);
                 $data['file_err'] = $loader->getMessages();
                 $status = $loader->getStatus();
                 $name = $loader->getName($_FILES['file']);
