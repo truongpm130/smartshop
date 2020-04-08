@@ -50,7 +50,6 @@ class User extends Database {
         } else {
             return false;
         }
-
     }
 
     public function login($email, $password)
@@ -214,7 +213,11 @@ class User extends Database {
     {
         $this->db->query('SELECT * FROM users');
         $users = $this->db->resultSet();
-        return $users;
+        if ($users) {
+            return $users;
+        } else {
+            return false;
+        }
     }
 
     // Get user by id
@@ -223,7 +226,12 @@ class User extends Database {
         $this->db->query('SELECT * FROM users WHERE id= :id');
         $this->db->bind('id', $id);
         $user = $this->db->single();
-        return $user;
+
+        if ($user) {
+            return $user;
+        } else {
+            return false;
+        }
     }
 
     public function activeUser($id)
@@ -272,9 +280,8 @@ class User extends Database {
         $this->db->bind('photo_id', $photo_id);
         $this->db->bind('id', $id);
 
-        $row = $this->db->single();
-        if ($row) {
-            return $row;
+        if ($this->db->execute()) {
+            return true;
         } else {
             return false;
         }

@@ -30,12 +30,12 @@
           <form action="<?php echo URLROOT; ?>/users/update/<?php echo $data['user']->id; ?>" method="post">
                         <div class="row">
                             <div class="form-group col">
-                                <label for="first_name">Tên: </label>
+                                <label for="first_name">First Name: </label>
                                 <input type="text" name="first_name" id="" class="form-control <?php echo (!empty($data['first_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->first_name; ?>">
                                 <span class="invalid-feedback"><?php echo $data['first_name_err'];?></span>
                             </div>
                             <div class="form-group col">
-                                <label for="last_name">Họ: </label>
+                                <label for="last_name">Last Name: </label>
                                 <input type="text" name="last_name" id="" class="form-control <?php echo (!empty($data['last_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->last_name; ?>">
                                 <span class="invalid-feedback"><?php echo $data['last_name_err'];?></span>
                             </div>
@@ -45,7 +45,7 @@
                         <input type="hidden" name="email" value="<?php echo $data['user']->email; ?>">
 
                         <div class="form-group">
-                            <label for="role"> Vai trò</label>:                            
+                            <label for="role"> Role</label>:
                             <select name="role" id="" class="form-control">
                                 <option value="<?php echo $data['role'] ? $data['role']->roleId : '' ?>" selected><?php echo $data['role'] ? $data['role']->roleName : '' ?></option>
                                 <?php if($data['roles']) : ?>
@@ -60,7 +60,7 @@
                             </select> 
                         </div>
 
-                        <input type="submit" value="Cập nhật" class="btn btn-primary btn-block">
+                        <input type="submit" value="Update" class="btn btn-primary btn-block">
                     </form>
         </div>
         <!-- /.container-fluid -->

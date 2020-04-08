@@ -19,10 +19,24 @@ class UsersController extends Controller
         $users = $this->userModel->getAllUser();
         $all_rule_user = $this->roleModel->getAllRoleUser();
 
+        $user_photo = [];
+
+        foreach ($users as $user) {
+            $avatar = $this->photoModel->getUserAvatar($user->id);
+            if ($avatar) {
+                $user_photo[$user->id] = $avatar->photoPath;
+            } else {
+                $user_photo[$user->id] = '';
+            }
+
+        }
+
         $data = [
             'users' => $users,
             'role_user' => $all_rule_user,
+            'user_photo' => $user_photo,
         ];
+
         return $this->view('admin/users/index', $data);
     }
 
@@ -173,11 +187,9 @@ class UsersController extends Controller
     public function add()
     {
         $roles = $this->roleModel->getAllRoles();
+        $genders = $this->genderModel->getAll();
 
-        // Check for Post
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Process form
-
             // Init data
             $data = [
                 'first_name' => test_input($_POST['first_name']),
@@ -185,6 +197,11 @@ class UsersController extends Controller
                 'email' => test_input($_POST['email']),
                 'password' => test_input($_POST['password']),
                 'confirm_password' => test_input($_POST['confirm_password']),
+                'gender' => $_POST['gender'],
+                'genders' => $genders,
+                'birthday' => test_input($_POST['birthday']),
+                'role' => $_POST['role'],
+                'roles' => $roles,
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'email_err' => '',
@@ -193,11 +210,9 @@ class UsersController extends Controller
             ];
 
             // Validate Register Input
-            // Validate Register Input
-            $result = $this->ValidateRegisterInput($data);
+            $result = $this->validateRegisterInput($data);
 
             $data = array_merge($data, $this->registerMsg);
-
 
             // Make sure errors are empty
             if ($result) {
@@ -205,29 +220,26 @@ class UsersController extends Controller
                 // Hash password
                 $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
 
-                if (isset($_POST['role'])) {
-                    $data['role'] = $_POST['role'];
-                }
-
                 // Register User
                 if ($this->userModel->add($data)) {
-                    flash('message', 'Add user success');
-                    redirect('users/index');
+                    flash('message', 'Add user success!');
+                    redirect('users/members');
                 } else {
                     die('Something went wrong');
                 }
             } else {
                 // Load view with errors
-                $data['roles'] = $roles;
                 $this->view('admin/users/add', $data);
             }
         } else {
-
             // Init data
             $data = [
                 'first_name' => '',
                 'last_name' => '',
                 'email' => '',
+                'genders' => $genders,
+                'gender' => '',
+                'roles' => $roles,
                 'password' => '',
                 'confirm_password' => '',
 
@@ -235,13 +247,13 @@ class UsersController extends Controller
                 'last_name_err' => '',
                 'email_err' => '',
                 'password_err' => '',
-                'confirm_password_err' => '',
-                'roles' => $roles,
+                'confirm_password_err' => ''
             ];
 
-            // Load view            
+            // Load view
             $this->view('admin/users/add', $data);
         }
+
     }
 
     public function ValidateRegisterInput($data)
@@ -399,7 +411,13 @@ class UsersController extends Controller
 
     public function delete($id)
     {
+        $user = $this->userModel->getUserById($id);
+        $photo = $this->photoModel->getPhoto($user->photo_id);
+        if ($user->photo_id) {
+            $this->photoModel->delete($user->photo_id);
+        }
         if ($this->userModel->delete($id)) {
+            unlink(AVATAR_USER_FOLDER . $photo);
             flash('message', 'Delete user success');
             redirect('users/index');
         } else {
@@ -426,7 +444,7 @@ class UsersController extends Controller
 
         if (!empty($data['user']->photo_id)) {
             $_SESSION['avatar'] = URLROOT . '/images/users/' . $data['photo'];
-        } elseif ($data['user']->gender === 2) {
+        } elseif ($data['user']->gender == 2) {
             $_SESSION['avatar'] = AVATAR_FEMALE;
         } else {
             $_SESSION['avatar'] = AVATAR_MALE;
@@ -438,7 +456,10 @@ class UsersController extends Controller
     public function profileUpdate($id)
     {
         $user = $this->userModel->getUserById($id);
-        $photo = $this->photoModel->getUserAvatar($id)->photoPath;
+        $photo = $this->photoModel->getUserAvatar($id);
+        if ($photo) {
+            $photo = $photo->photoPath;
+        }
         $gender = $this->userModel->getGender($id);
         $genders = $this->genderModel->getAll();
 
@@ -512,16 +533,15 @@ class UsersController extends Controller
                 'genders' => $genders,
                 'gender' => $gender->id,
                 'photo' => '',
+                'file_err' => [],
             ];
 
             // Check if user already have photo
             $photo = $this->photoModel->getUserAvatar($id);
 
             if ($photo) {
-                $data['photo'] = $photo;
+                $data['photo'] = $photo->photoPath;
             }
-
-            $data['file_err'] = [];
 
             try {
                 $loader = new ThumbnailUpload($target_dir, true);
@@ -556,7 +576,6 @@ class UsersController extends Controller
                             exit('something went wrong');
                         }
                     }
-
                 } else {
                     return $this->view('admin/profile/edit', $data);
                 }
@@ -565,7 +584,6 @@ class UsersController extends Controller
             }
         }
     }
-
 
     public function changePass($id)
     {

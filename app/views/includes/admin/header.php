@@ -19,11 +19,6 @@ if (!isset($_SESSION['user_id'])) {
     redirect('/users/login?expired=yes');
 }
 
-
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

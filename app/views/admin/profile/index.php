@@ -39,7 +39,7 @@
                   <?php
                     if (!empty($data['user']->photo_id)) {
                         echo URLROOT . '/images/users/' . $data['photo'];
-                    } elseif ($data['user']->gender === 2) {
+                    } elseif ($data['user']->gender == 2) {
                         echo AVATAR_FEMALE;
                     } else {
                         echo AVATAR_MALE;

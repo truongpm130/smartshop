@@ -49,7 +49,7 @@ class Role extends Database {
         if ($result = $this->db->resultSet()) {
             return $result;
         } else {
-            exit('Something went wrong');
+            return false;
         }
         
     }

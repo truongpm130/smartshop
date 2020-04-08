@@ -38,6 +38,7 @@
             <thead>
               <tr>
                 <th>Id</th>
+                <th>Photo</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Status</th>
@@ -50,6 +51,18 @@
               <?php foreach($data['users'] as $user) : ?>
               <tr>
                 <td><?php echo $user->id; ?></td>
+                <td>
+                    <img src="<?php
+                    if (!empty($user->photo_id)) {
+                        echo URLROOT . '/images/users/' . $data['user_photo'][$user->id];
+                    } elseif ($user->gender == 2) {
+                        echo URLROOT . '/images/users/female.png';
+                    } else {
+                        echo URLROOT . '/images/users/male.png';
+                    }
+                    ?>
+                  " alt="..." class="rounded-circle" height="80">
+                </td>
                 <td><?php echo $user->last_name . ' ' . $user->first_name; ?></td>
                 <td><?php echo $user->email; ?></td>
                 <td><?php echo $user->status ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-secondary">Inactive</span>'; ?></td>
@@ -58,7 +71,7 @@
                     if ($data['role_user']) {
                       for ($i = 0; $i < count($data['role_user']); $i++) {
                         if ($user->id === $data['role_user'][$i]->userId) {
-                          echo $data['role_user'][$i]->roleName;
+                          echo ucfirst($data['role_user'][$i]->roleName);
                         } else {
                           echo '';
                         }
@@ -68,7 +81,7 @@
                     }
                   ?>
                 </td>
-                <td><?php echo $user->created_at; ?></td>
+                <td><?php echo timeago($user->created_at) ; ?></td>
                 <td>
                   <a href="<?php echo URLROOT; ?>/users/edit/<?php echo $user->id; ?>" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
                   <?php if($user->status) : ?>
