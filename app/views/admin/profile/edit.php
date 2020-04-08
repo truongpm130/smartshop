@@ -28,9 +28,25 @@
                 <a href="<?php echo URLROOT; ?>/users/profile/<?php echo $data['user']->id; ?>" class="btn btn-secondary d-inline-block float-right"><i class="fa fa-arrow-left"></i> Back</a>
 
                 <!-- Update Profile -->
+
                 <div class="row">
-                    <div class="col-md-4">
-                        <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid w-75 p-3">
+                    <div class="ml-auto">
+                        <a href="<?php echo URLROOT; ?>/users/changePass/<?php echo $data['user']->id; ?>" class="btn btn-warning">Change Password</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="
+                  <?php
+                        if (!empty($data['user']->photo_id)) {
+                            echo URLROOT . '/images/users/' . $data['photo'];
+                        } elseif ($data['user']->gender === 2) {
+                            echo AVATAR_FEMALE;
+                        } else {
+                            echo AVATAR_MALE;
+                        }
+                        ?>
+                  " alt="..." class="img-fluid rounded-circle w-75 p-3">
                         <div class="text-center mt-3">
                             <form action="<?php echo URLROOT; ?>/users/updateAvatar/<?php echo $data['user']->id ?>" method="post" enctype="multipart/form-data">
                                 <div class="form-group mb-3">
@@ -48,7 +64,7 @@
                             </form>                            
                         </div>                        
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8 mt-4">
                         <form action="<?php echo URLROOT; ?>/users/profileUpdate/<?php echo $data['user']->id; ?>" method="post">   
                             <div class="row">
                                 <div class="form-group col">
@@ -61,24 +77,40 @@
                                     <input type="text" name="last_name" id="" class="form-control <?php echo (!empty($data['last_name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->last_name; ?>" required>
                                     <span class="invalid-feedback"><?php echo $data['last_name_err']; ?></span>
                                 </div>
-
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mt-3">
                                 <label for="staticEmail" class="col-sm-2 col-form-label">Email: </label>
                                 <div class="col-sm-10">
                                 <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?php echo $data['user']->email; ?>">
                                 </div>
                             </div>
 
-                            <input type="submit" value="Cập nhật" class="btn btn-primary btn-block">
+                            <div class="form-group">
+                                <label for="gender" class="form-check-label mr-3">Gender:</label>
+                                <?php if (!empty($data['genders'])) :?>
+                                    <?php foreach ($data['genders'] as $gender) :?>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" class="form-check-input" id="<?php echo $gender->name ?>" name="gender" value="<?php echo $gender->id ?>"
+                                                <?php
+                                                if (!empty($data['gender'])) {
+                                                    echo $data['gender'] == $gender->id ? 'checked' : '';
+                                                }
+                                                ?> required >
+                                            <label for="<?php echo $gender->name ?>" class="form-check-label"><?php echo ucfirst($gender->name); ?></label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="form-group my-4">
+                                <label for="phone">Phone number: </label>
+                                <input type="text" name="phone" id="" class="form-control <?php echo (!empty($data['phone_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['user']->phone; ?>">
+                                <span class="invalid-feedback"><?php echo $data['phone_err'];?></span>
+                            </div>
+
+                            <input type="submit" value="Update" class="btn btn-primary btn-block mt-5">
                         </form>
-
-                    <div class="mt-5">
-                        <a href="<?php echo URLROOT; ?>/users/changePass/<?php echo $data['user']->id; ?>" class="btn btn-warning">Change Password</a>
-                    </div>
-                        
-
                     </div>
                 </div>
             </div>

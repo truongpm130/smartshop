@@ -12,7 +12,7 @@ class User extends Database {
     // Register User
     public function register($data)
     {
-        $this->db->query('INSERT INTO users (first_name, last_name, email, password, gender) VAlUES (:first_name, :last_name, :email, :password, :gender)');
+        $this->db->query('INSERT INTO users (first_name, last_name, email, password, gender, birthday) VAlUES (:first_name, :last_name, :email, :password, :gender, :birthday)');
 
         // Bind values
         $this->db->bind(':first_name', $data['first_name']);
@@ -20,6 +20,7 @@ class User extends Database {
         $this->db->bind(':email', $data['email']);
         $this->db->bind(':password', $data['password']);
         $this->db->bind(':gender', $data['gender']);
+        $this->db->bind(':birthday', $data['birthday']);
 
         // Execute
         if ($this->db->execute()) {
@@ -106,13 +107,15 @@ class User extends Database {
         } 
     }
 
-    public function updateProfile($id, $first_name, $last_name)
+    public function updateProfile($id, $first_name, $last_name, $gender, $phone = null)
     {
-        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name
+        $this->db->query('UPDATE users SET first_name = :first_name, last_name = :last_name, gender = :gender, phone = :phone
                             WHERE id = :id
                         ');
         $this->db->bind('first_name', $first_name);
         $this->db->bind('last_name', $last_name);
+        $this->db->bind('gender', $gender);
+        $this->db->bind('phone', $phone);
         $this->db->bind('id', $id);
 
         if ($this->db->execute()) {
@@ -244,5 +247,38 @@ class User extends Database {
             return false;
         }
     }
+
+
+    // Get gender of user
+    public function getGender($id) {
+        $this->db->query('SELECT genders.name AS name, genders.id as id
+                                FROM genders
+                                INNER JOIN users
+                                ON genders.id = users.gender
+                                WHERE users.id = :id 
+                        ');
+        $this->db->bind('id', $id);
+        $row = $this->db->single();
+
+        if ($row) {
+            return $row;
+        } else {
+            exit('Something went wrong');
+        }
+    }
+
+    public function updateAvatar($id, $photo_id) {
+        $this->db->query('UPDATE users SET photo_id = :photo_id WHERE id = :id');
+        $this->db->bind('photo_id', $photo_id);
+        $this->db->bind('id', $id);
+
+        $row = $this->db->single();
+        if ($row) {
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
 
 }

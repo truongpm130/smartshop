@@ -1,4 +1,5 @@
 <?php
+require_once APPROOT . '/libraries/CheckPassword.php';
 
 class Validate {
 
@@ -39,23 +40,13 @@ class Validate {
 
     public function validatePass($pass)
     {
-        // Validate password strength
-        $uppercase = preg_match('@[A-Z]@', $pass);
-        $lowercase = preg_match('@[a-z]@', $pass);
-        $number    = preg_match('@[0-9]@', $pass);
+        $check = new CheckPassword($pass, 6);
+        $check->requireNumbers();
+        $check->requireMixedCase();
+        $result = $check->check();
+        $this->msg['password_err'] = $check->getErrors();
 
-        if (empty($pass)) {
-            $this->msg['password_err'] = 'Please enter password';
-            return false;
-        } elseif (strlen($pass) < 6) {
-            $this->msg['password_err'] = 'Password must be at least 6 characters';
-            return false;
-        } elseif (!$uppercase || !$lowercase || !$number) {
-            $this->msg['password_err'] = 'Password must include at least one uppercase, one lowercase and one number';
-            return false;
-        } else {
-            return true;
-        }
+        return $result;
     }
 
     public function validateConfPass($pass, $confPass)

@@ -7,6 +7,11 @@
             <!-- Flash message -->
             <?php flash('message'); ?>
 
+            <!-- Message when session expired -->
+            <?php if (isset($_GET['expired'])) :?>
+                <span class="alert alert-danger d-block">Your session has been expired. Please login again</span>
+            <?php endif; ?>
+
             <!-- Login Form -->
             <div class="card">
                 <div class="card-header text-center">

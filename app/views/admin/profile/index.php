@@ -34,14 +34,34 @@
                 <h4 class="text-success"><?php echo $_SESSION['user_name'] ?></h4>
               </div>
               <div class="row no-gutters">
-                <div class="col-md-4 mt-4">
-                  <img src="<?php echo $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR ?>" alt="..." class="img-fluid w-75 p-3">
+                <div class="col-md-4 mt-4 text-center">
+                  <img src="
+                  <?php
+                    if (!empty($data['user']->photo_id)) {
+                        echo URLROOT . '/images/users/' . $data['photo'];
+                    } elseif ($data['user']->gender === 2) {
+                        echo AVATAR_FEMALE;
+                    } else {
+                        echo AVATAR_MALE;
+                    }
+                  ?>
+                  " alt="..." class="img-fluid rounded-circle w-75 p-3">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
-                  <p class="card-text my-2 ">Họ và tên: <strong><?php echo $data['user']->last_name . ' ' . $data['user']->first_name ?></strong></p>
+                  <p class="card-text my-2 ">Full Name: <strong><?php echo $data['user']->last_name . ' ' . $data['user']->first_name ?></strong></p>
                   <p class="card-text my-2">Email: <strong><?php echo $data['user']->email; ?></strong></p>
-                  <p class="card-text my-2">Ngày tham gia: <strong><?php echo $data['user']->created_at; ?></strong></p>
+                  <p class="card-text my-2">Gender: <strong><?php echo ucfirst($data['gender']); ?></strong></p>
+                  <p class="card-text my-2">Birthday: <strong><?php echo $data['user']->birthday; ?></strong></p>
+                  <p class="card-text my-2">Phone: <strong><?php echo $data['user']->phone ?? ''; ?></strong></p>
+                  <p class="card-text my-2">Join at:
+                      <strong>
+                          <?php
+                            $date = $data['user']->created_at;
+                            $date = strtotime($date);
+                            echo  date('D, d/m/Y') ;
+                          ?>
+                      </strong></p>
                   </div>
                 </div>
               </div>

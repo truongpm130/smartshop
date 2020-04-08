@@ -32,50 +32,25 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="gender" class="form-check-label mr-3">Gender:</label>
+                            <?php if (!empty($data['genders'])) :?>
+                            <?php foreach ($data['genders'] as $gender) :?>
                             <div class="form-check form-check-inline">
-                                <label for="gender" class="form-check-label mr-3">Gender:</label>
-                                <input type="radio" class="form-check-input" id="male" name="gender" value="male" 
+                                <input type="radio" class="form-check-input" id="<?php echo $gender->name ?>" name="gender" value="<?php echo $gender->id ?>"
                                 <?php 
                                     if (!empty($data['gender'])) {
-                                        if ($data['gender'] == 'male') {
-                                            echo 'checked';
-                                        } else {
-                                            echo '';
-                                        }
+                                       echo $data['gender'] == $gender->id ? 'checked' : '';
                                     }
                                 ?> required >
-                                <label for="male" class="form-check-label">Male</label>
+                                <label for="<?php echo $gender->name ?>" class="form-check-label"><?php echo ucfirst($gender->name); ?></label>
                             </div>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
 
-                            <div class="form-check form-check-inline">
-
-                                <input type="radio" class="form-check-input" id="female" name="gender" value="female" 
-                                <?php 
-                                    if (!empty($data['gender'])) {
-                                        if ($data['gender'] == 'female') {
-                                            echo 'checked';
-                                        } else {
-                                            echo '';
-                                        }
-                                    }
-                                ?> required>
-                                <label for="female" class="form-check-label">Female</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input type="radio" class="form-check-input" id="other" name="gender" value="other"
-                                <?php 
-                                    if (!empty($data['gender'])) {
-                                        if ($data['gender'] == 'other') {
-                                            echo 'checked';
-                                        } else {
-                                            echo '';
-                                        }
-                                    }
-                                ?> required>
-                                <label for="other" class="form-check-label">Other</label>
-                            </div>
-
+                        <div class="form-group">
+                            <label for="birthday">Birthday: </label>
+                            <input type="date" name="birthday" class="form-control" required>
                         </div>
 
                         <div class="form-group">

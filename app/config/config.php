@@ -18,7 +18,8 @@ define('URLROOT', 'http://localhost/smartshop');
 define('SITENAME','SmartShop');
 
 // Default Avatar
-define('AVATAR', URLROOT . '/images/users/avatar.png');
+define('AVATAR_MALE', URLROOT . '/images/users/male.png');
+define('AVATAR_FEMALE', URLROOT . '/images/users/female.png');
 
 define('AVATAR_USER_FOLDER', $_SERVER['DOCUMENT_ROOT'].'/smartshop/public/images/users/');
 

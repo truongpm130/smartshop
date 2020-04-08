@@ -10,10 +10,12 @@ class Photo extends Database
         $this->db = new Database();
     }
 
-    public function upload($path)
+    public function upload($path, $imageable_id, $imageable_type)
     {
-        $this->db->query('INSERT INTO photos(path) VALUE(:path)');
+        $this->db->query('INSERT INTO photos(path, imageable_id, imageable_type) VALUE(:path, :imageable_id, :imageable_type)');
         $this->db->bind('path', $path);
+        $this->db->bind('imageable_id', $imageable_id);
+        $this->db->bind('imageable_type', $imageable_type);
         if ($this->db->execute()) {
             return true;
         } else {
@@ -51,21 +53,16 @@ class Photo extends Database
         }
     }
 
-    public function updateUserAvatar($id, $path)
+    public function updateUserAvatar($photo_id, $path)
     {
-        if ($this->upload($path)) {
-            $this->db->query('SELECT MAX(id) AS maxID FROM photos');
-            $photo_id = $this->db->single();
-            if ($photo_id) {
-                $this->db->query('UPDATE users SET photo_id = :photo_id WHERE id = :id');
-                $this->db->bind('photo_id', $photo_id->maxID);
-                $this->db->bind('id', $id);
-                if ($this->db->execute()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+        $this->db->query('UPDATE photos SET path = :path WHERE id = :photo_id');
+        $this->db->bind('photo_id', $photo_id);
+        $this->db->bind('path', $path);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
         }
     }
 

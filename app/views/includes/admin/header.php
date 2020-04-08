@@ -1,3 +1,30 @@
+<?php
+// set a time limit in seconds
+$timeLimit = 60*60;
+
+// Get the current time
+$now = time();
+
+//    If session variable not set, redirect ro login page
+if (!isset($_SESSION['user_id'])) {
+    redirect('users/login');
+    exit();
+} elseif ($now > $_SESSION['start'] + $timeLimit) {
+//    if time limt has expired, destroy session and redirect
+    $_SESSION = [];
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time()-86400, '/');
+    }
+    session_destroy();
+    redirect('/users/login?expired=yes');
+}
+
+
+
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 

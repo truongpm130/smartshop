@@ -11,6 +11,7 @@ class UsersController extends Controller
         $this->userModel = $this->model('User');
         $this->roleModel = $this->model('Role');
         $this->photoModel = $this->model('Photo');
+        $this->genderModel = $this->model('Gender');
     }
 
     public function index()
@@ -39,6 +40,7 @@ class UsersController extends Controller
                 'password' => test_input($_POST['password']),
                 'confirm_password' => test_input($_POST['confirm_password']),
                 'gender' => $_POST['gender'],
+                'birthday' => $_POST['birthday'],
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'email_err' => '',
@@ -71,11 +73,15 @@ class UsersController extends Controller
             }
         } else {
 
+            $genders = $this->genderModel->getAll();
+
             // Init data
             $data = [
                 'first_name' => '',
                 'last_name' => '',
                 'email' => '',
+                'genders' => $genders,
+                'gender' => '',
                 'password' => '',
                 'confirm_password' => '',
 
@@ -108,7 +114,6 @@ class UsersController extends Controller
             // Validate email
             $checkEmail = $validate->validateEmail($data['email']);
             
-
             // Validate password
             $checkPass = $validate->validatePass($data['password']);
 
@@ -145,10 +150,15 @@ class UsersController extends Controller
 
     public function logout()
     {
-        unset($_SESSION['user_id']);
-        unset($_SESSION['user_email']);
-        unset($_SESSION['user_name']);
-        redirect('/users/login');
+        // Empty session array
+       $_SESSION = [];
+       // Invalidate the session cookie
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time()-86400, '/');
+        }
+        // End session and redirect
+        session_destroy();
+        redirect('users/login');
     }
 
     public function createUserSession($user)
@@ -156,6 +166,7 @@ class UsersController extends Controller
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_email'] = $user->email;
         $_SESSION['user_name'] = $user->last_name . ' ' . $user->first_name;
+        $_SESSION['start'] = time();
         redirect('users/profile/' . $_SESSION['user_id']);
     }
 
@@ -399,22 +410,27 @@ class UsersController extends Controller
     public function profile($id)
     {
         $user = $this->userModel->getUserById($id);
+        $gender = $this->userModel->getGender($id)->name;
+
         $data = [
             'user' => $user,
             'photo' => '',
+            'gender' => $gender,
         ];
-
         // Check if users has avatar
         $photo = $this->photoModel->getUserAvatar($id);
 
         if ($photo) {
-            $data = [
-                'user' => $user,
-                'photo' => $photo->photoPath,
-            ];
+            $data['photo'] = $photo->photoPath;
         }
 
-        $_SESSION['avatar'] = $data['user']->photo_id ? URLROOT . '/images/users/' . $data['photo'] : AVATAR;
+        if (!empty($data['user']->photo_id)) {
+            $_SESSION['avatar'] = URLROOT . '/images/users/' . $data['photo'];
+        } elseif ($data['user']->gender === 2) {
+            $_SESSION['avatar'] = AVATAR_FEMALE;
+        } else {
+            $_SESSION['avatar'] = AVATAR_MALE;
+        }
 
         return $this->view('admin/profile/index', $data);
     }
@@ -422,7 +438,9 @@ class UsersController extends Controller
     public function profileUpdate($id)
     {
         $user = $this->userModel->getUserById($id);
-        $photo = $this->photoModel->getUserAvatar($id);
+        $photo = $this->photoModel->getUserAvatar($id)->photoPath;
+        $gender = $this->userModel->getGender($id);
+        $genders = $this->genderModel->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
@@ -430,6 +448,8 @@ class UsersController extends Controller
             $data = [
                 'first_name' => test_input($_POST['first_name']),
                 'last_name' => test_input($_POST['last_name']),
+                'gender' => test_input($_POST['gender']),
+                'phone' => test_input($_POST['phone']),
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'id' => $id,
@@ -448,7 +468,7 @@ class UsersController extends Controller
             if ($checkfName && $checklName) {
 
                 // Update profile
-                if ($this->userModel->updateProfile($id, $data['first_name'], $data['last_name'])) {
+                if ($this->userModel->updateProfile($id, $data['first_name'], $data['last_name'], $data['gender'], $data['phone'])) {
                     flash('message', 'Update user success');
                     redirect('/users/profile/' . $id);
                 } else {
@@ -462,16 +482,12 @@ class UsersController extends Controller
                 'first_name_err' => '',
                 'last_name_err' => '',
                 'user' => $user,
+                'genders' => $genders,
+                'gender' => $gender->id,
                 'photo' => '',
             ];
-
             if ($photo) {
-                $data = [
-                    'first_name_err' => '',
-                    'last_name_err' => '',
-                    'user' => $user,
-                    'photo' => $photo->photoPath,
-                ];
+                $data['photo'] = $photo;
             }
 
             return $this->view('/admin/profile/edit', $data);
@@ -480,22 +496,29 @@ class UsersController extends Controller
 
     public function updateAvatar($id)
     {
-
         if (isset($_POST['update_file'])) {
 
             // specifies the directory where the file is going to be placed
             $target_dir = AVATAR_USER_FOLDER;
 
-            // Get user by id
             $user = $this->userModel->getUserById($id);
-            // Check if users has avatar
+            $gender = $this->userModel->getGender($id);
+            $genders = $this->genderModel->getAll();
+
+            $data = [
+                'first_name_err' => '',
+                'last_name_err' => '',
+                'user' => $user,
+                'genders' => $genders,
+                'gender' => $gender->id,
+                'photo' => '',
+            ];
+
+            // Check if user already have photo
             $photo = $this->photoModel->getUserAvatar($id);
 
             if ($photo) {
-                $data = [
-                    'user' => $user,
-                    'photo' => $photo->photoPath,
-                ];
+                $data['photo'] = $photo;
             }
 
             $data['file_err'] = [];
@@ -503,22 +526,37 @@ class UsersController extends Controller
             try {
                 $loader = new ThumbnailUpload($target_dir, true);
                 $loader->setThumbOptions($target_dir, MAX_SIZE);
-                $loader->upload('file', 100000);
+                $loader->upload('file', 1024*1000);
                 $data['file_err'] = $loader->getMessages();
                 $status = $loader->getStatus();
                 $name = $loader->getName($_FILES['file']);
 
                 if ($status) {
-                    // Insert photo tables, update users table
-                    if ($this->photoModel->updateUserAvatar($id, $name)) {
-
-                        // Flash message
-                        flash('message', 'Your avatar is updated!');
-
-                        redirect('users/profile/' . $data['user']->id, $data);
+                    if (!$photo) {
+                        if ($this->photoModel->upload($name, $user->id, 'Users')) {
+                            $photo_id = $this->photoModel->getMaxId();
+                            if ($this->userModel->updateAvatar($id, $photo_id)) {
+                                flash('message', 'Your avatar is updated!');
+                                redirect('users/profile/' . $data['user']->id);
+                            }
+                        } else {
+                            exit('Something went wrong');
+                        }
                     } else {
-                        exit('something went wrong');
+
+                        $user_photo_id = $user->photo_id;
+                        if ($this->photoModel->updateUserAvatar($user_photo_id, $name)) {
+
+                            unlink(AVATAR_USER_FOLDER . $photo->photoPath);
+                            // Flash message
+                            flash('message', 'Your avatar is updated!');
+
+                            redirect('users/profile/' . $data['user']->id);
+                        } else {
+                            exit('something went wrong');
+                        }
                     }
+
                 } else {
                     return $this->view('admin/profile/edit', $data);
                 }
