@@ -1,6 +1,6 @@
 <?php
 
-class CategoryProduct extends Database {
+class ProductCategory extends Database {
 
     private $db;
 

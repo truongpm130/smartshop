@@ -1,17 +1,17 @@
 <?php
 
-class CategoryProductController extends Controller {
+class ProductCategoryController extends Controller {
 
-    protected $categoryProductModel;
+    protected $productCategoryModel;
 
     public function __construct()
     {
-        $this->categoryProductModel = $this->model('CategoryProduct');
+        $this->productCategoryModel = $this->model('ProductCategory');
     }
 
     public function index()
     {
-        $categories = $this->categoryProductModel->getAll();
+        $categories = $this->productCategoryModel->getAll();
         $data = [
             'categories' =>$categories,
         ];
@@ -21,25 +21,23 @@ class CategoryProductController extends Controller {
     public function add()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             // Init data
             $data = [
-                'name' => trim($_POST['name']),
-                'slug' => trim($_POST['slug']),
+                'name' => test_input($_POST['name']),
+                'slug' => test_input($_POST['slug']),
                 'name_err' => '',
             ];
 
             // Validated name
             if (empty($data['name'])) {
-                $data['name_err'] = 'Vui lòng nhập thể loại';
+                $data['name_err'] = 'Please enter category name';
             }
 
             if (empty($data['name_err'])) {
-                if ($this->categoryProductModel->add($data['name'], $data['slug'])) {
-                    flash('message', 'Tạo thể loaị mới thành công');
-                    redirect('categoryProduct/index');
+                if ($this->productCategoryModel->add($data['name'], $data['slug'])) {
+                    flash('message', 'Create new category success');
+                    redirect('productCategory/index');
                 } else {
                     exit('Something went wrong');
                 }
@@ -59,27 +57,24 @@ class CategoryProductController extends Controller {
     public function edit($id)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            
-            // Sanitize Post data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
             // Init data
             $data = [
                 'id' => $id,
-                'name' => trim($_POST['name']),
-                'slug' => trim($_POST['slug']),
+                'name' => test_input($_POST['name']),
+                'slug' => test_input($_POST['slug']),
                 'name_err' => '',
             ];
 
             // Validated name
             if (empty($data['name'])) {
-                $data['name_err'] = 'Vui lòng nhập thể loại';
+                $data['name_err'] = 'Please enter category name';
             }
 
             if (empty($data['name_err'])) {
-                if ($this->categoryProductModel->update($id, $data['name'], $data['slug'])) {
-                    flash('message', 'Tạo thể loaị mới thành công');
-                    redirect('categoryProduct/index');
+                if ($this->productCategoryModel->update($id, $data['name'], $data['slug'])) {
+                    flash('message', 'Category edit success');
+                    redirect('productCategory/index');
                 } else {
                     exit('Something went wrong');
                 }
@@ -88,7 +83,7 @@ class CategoryProductController extends Controller {
                 return $this->view('admin/products_categories/edit', $data);
             }
         } else {
-            $category = $this->categoryProductModel->findCategoryById($id);
+            $category = $this->productCategoryModel->findCategoryById($id);
             $data = [
                 'id' => $category->id,
                 'name' => $category->name,
@@ -102,9 +97,9 @@ class CategoryProductController extends Controller {
 
     public function delete($id)
     {
-        if ($this->categoryProductModel->delete($id)) {
-            flash('message', 'Xóa thể loại thành công');
-            redirect('categoryProduct/index');
+        if ($this->productCategoryModel->delete($id)) {
+            flash('message', 'Category is deleted');
+            redirect('productCategory/index');
         } else {
             exit('Something went wrong');
         }

@@ -49,7 +49,7 @@
 
           <!-- Search Products in current page by JS-->
           <div class="d-d-inline-block float-right">
-            <input type="text" name="" id="searchProduct" placeholder="Tìm sản phẩm trong trang" class="form-control mx-2">
+            <input type="text" name="" id="searchProduct" placeholder="Search product in page" class="form-control mx-2">
           </div>
         </div>
 
@@ -58,7 +58,7 @@
           <form action="<?php echo URLROOT; ?>/products/search" method="post" class="form-inline">
             <div class="form-group">
               <label for="search"></label>
-              <input type="text" name="search" id="" class="form-control" placeholder="Tìm sản phẩm">
+              <input type="text" name="search" id="" class="form-control" placeholder="Search Products">
             </div>
             <button type="submit" class="btn btn-outline-dark"><i class="fas fa-search"></i></button>
           </form>
@@ -67,11 +67,11 @@
         <!-- Sort -->
         <div class="dropdown d-inline-block float-right">
           <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Sắp xếp
+            Order by
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="<?php echo URLROOT; ?>/products/priceAsc">Giá tăng dần</a>
-            <a class="dropdown-item" href="<?php echo URLROOT; ?>/products/priceDesc">Giá giảm dần</a>
+            <a class="dropdown-item" href="<?php echo URLROOT; ?>/products/priceAsc">Price ASC</a>
+            <a class="dropdown-item" href="<?php echo URLROOT; ?>/products/priceDesc">Price DESC</a>
           </div>
         </div>
 
@@ -81,17 +81,18 @@
           <thead>
             <tr>
               <th>Id</th>
-              <th>Thể loại</th>
-              <th>Tên</th>
-              <th>Hình ảnh</th>
-              <th>Giá</th>
-              <th>Miêu tả</th>
-              <th>Trạng thái</th>
-              <th>Lượt xem</th>
+              <th>Category</th>
+              <th>Name</th>
+              <th>Image</th>
+              <th>Price</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Views</th>
               <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
+          <?php if($data['products']) :?>
             <?php foreach ($data['products'] as $product) : ?>
               <tr>
                 <td><?php echo $product->id; ?></td>
@@ -106,23 +107,31 @@
                 <td><?php echo $product->status ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-secondary">Inactive</span>'; ?></td>
                 <td><?php echo $product->counter ? $product->counter : '0'; ?></td>
                 <td>
+                <?php if(($_SESSION['user_id'] == $product->user_id) || ($_SESSION['user_role'] == 'admin') || $_SESSION['user_role'] == 'editor') : ?>
                   <table>
                     <tr>
                       <td>
-                        <a href="<?php echo URLROOT; ?>/products/edit/<?php echo $product->id; ?>" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
+                        <a href="<?php echo URLROOT; ?>/products/edit/<?php echo $product->id; ?>" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Edit"><i class="far fa-edit"></i></a>
                       </td>
+                      <?php if ($_SESSION['user_role'] == 'admin' || $_SESSION['user_role'] == 'editor') :?>
                       <td>
+
                         <?php if ($product->status) : ?>
                           <a href="<?php echo URLROOT; ?>/products/inactive/<?php echo $product->id; ?>" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Inactive"><i class="fas fa-times"></i></a>
                         <?php else : ?>
                           <a href="<?php echo URLROOT; ?>/products/active/<?php echo $product->id; ?>" class="btn btn-success" data-toggle="tooltip" data-placement="bottom" title="Active"><i class="fas fa-check"></i></a>
                         <?php endif; ?>
                       </td>
+                      <?php endif; ?>
+
+                      <?php if ($_SESSION['user_id'] == $product->user_id || $_SESSION['user_role'] == 'admin') : ?>
                       <td>
                         <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteProductModal<?php echo $product->id ?>"><i class="fa fa-trash"></i></a>
                       </td>
+                      <?php endif; ?>
                     </tr>
                   </table>
+                <?php endif; ?>
 
                   <input type="hidden" name="id" id="user<?php echo $product->id; ?>" value="<?php echo $product->id; ?>">
                 </td>
@@ -144,8 +153,8 @@
                     <div class="modal-footer">
                       <form action="<?php echo URLROOT; ?>/products/delete/<?php echo $product->id; ?>" method="product">
                         <input type="hidden" name="user_id" class="user_delete_id" value="<?php echo $product->id; ?>">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy Bỏ</button>
-                        <button type="submit" class="btn btn-danger btn_delete">Xóa</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger btn_delete">Delete</button>
                       </form>
                     </div>
                   </div>
@@ -175,6 +184,7 @@
               <!-- /Show Products Description  -->
 
             <?php endforeach; ?>
+          <?php endif; ?>
           </tbody>
         </table>
 

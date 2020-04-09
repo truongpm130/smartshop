@@ -29,7 +29,7 @@ class Photo extends Database
         $row = $this->db->single();
 
         if ($row) {
-            return $row->maxId;
+            return (int) $row->maxId;
         } else {
             return false;
         }
@@ -118,6 +118,30 @@ class Photo extends Database
     public function delete($id) {
         $this->db->query('DELETE FROM photos WHERE id = :id');
         $this->db->bind('id', $id);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateProductId($photo_id, $product_id) {
+        $this->db->query('UPDATE photos SET imageable_id = :product_id WHERE id = :photo_id');
+        $this->db->bind('product_id', $product_id);
+        $this->db->bind('photo_id', $photo_id);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updatePath($id, $path) {
+        $this->db->query('UPDATE photos SET path = :path WHERE id = :id');
+        $this->db->bind('id', $id);
+        $this->db->bind('path', $path);
 
         if ($this->db->execute()) {
             return true;

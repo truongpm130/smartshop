@@ -27,7 +27,7 @@
 
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800 d-inline-block">Products - Categories</h1>
-          <a href="<?php echo URLROOT; ?>/categoryProduct/add" class="btn btn-primary d-inline-block float-right"><i class="fa fa-plus"></i> Add Categories</a>
+          <a href="<?php echo URLROOT; ?>/productCategory/add" class="btn btn-primary d-inline-block float-right"><i class="fa fa-plus"></i> Add Categories</a>
 
           <!-- Users Controller -->
           <table class="table table-striped">
@@ -46,7 +46,7 @@
                 <td><?php echo $category->name; ?></td>
                 <td><?php echo $category->slug; ?></td>
                 <td>
-                  <a href="<?php echo URLROOT; ?>/categoryProduct/edit/<?php echo $category->id; ?>" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
+                  <a href="<?php echo URLROOT; ?>/productCategory/edit/<?php echo $category->id; ?>" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Chỉnh sửa"><i class="far fa-edit"></i></a>
                   
                   <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#deleteCategoryModal<?php echo $category->id ?>"><i class="fa fa-trash"></i></a>
                   <input type="hidden" name="id" id="user<?php echo $category->id; ?>" value="<?php echo $category->id; ?>">
@@ -64,13 +64,13 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                        All Post of this Category will be lost!
+                        All Products of this Category will be lost!
                       </div>
                       <div class="modal-footer">
-                        <form action="<?php echo URLROOT; ?>/categoryProduct/delete/<?php echo $category->id; ?>" method="post">
+                        <form action="<?php echo URLROOT; ?>/productCategory/delete/<?php echo $category->id; ?>" method="post">
                           <input type="hidden" name="user_id" class="user_delete_id" value="<?php echo $category->id; ?>">
-                          <button type="button" class="btn btn-secondary"  data-dismiss="modal">Hủy Bỏ</button>
-                          <button type="submit" class="btn btn-danger btn_delete">Xóa</button>
+                          <button type="button" class="btn btn-secondary"  data-dismiss="modal">Cancel</button>
+                          <button type="submit" class="btn btn-danger btn_delete">Delete</button>
                         </form>
                       </div>
                     </div>

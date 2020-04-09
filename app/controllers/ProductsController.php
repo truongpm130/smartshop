@@ -6,7 +6,7 @@ class ProductsController extends Controller
     public function __construct()
     {
         $this->productModel = $this->model('Product');
-        $this->categoryProductModel = $this->model('CategoryProduct');
+        $this->categoryProductModel = $this->model('ProductCategory');
         $this->photoModel = $this->model('Photo');
     }
 
@@ -37,14 +37,16 @@ class ProductsController extends Controller
         $categories = [];
         $photos = [];
 
-        foreach ($products as $product) {
+        if ($products) {
+            foreach ($products as $product) {
 
-            $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
+                $categories[$product->id] = $this->categoryProductModel->getCategory($product->category_id);
 
-            $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
+                $photos[$product->id] = $this->photoModel->getPhoto($product->photo_id);
 
+            }
         }
-        
+
         $data = [
             'products' => $products,
             'categories' => $categories,
@@ -63,15 +65,12 @@ class ProductsController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-            // Sanitize Post data
-            // $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
             $data = [
-                'name' => trim($_POST['name']),
-                'slug' => trim($_POST['slug']),
-                'price' => trim($_POST['price']),
-                'category' => trim($_POST['category']),
-                'description' => trim($_POST['description']),
+                'name' => test_input($_POST['name']),
+                'slug' => test_input($_POST['slug']),
+                'price' => test_input($_POST['price']),
+                'category' => test_input($_POST['category']),
+                'description' => test_input($_POST['description']),
                 'photo_id' => '',
                 'file' => $_FILES['file'],
                 'name_err' => '',
@@ -79,93 +78,54 @@ class ProductsController extends Controller
                 'file_err' => '',
                 'description_err' => '',
                 'categories' => $categories,
+                'user_id' => $_SESSION['user_id'],
             ];
 
             if (empty($data['name'])) {
-                $data['name_err'] = 'Vui lòng điền tên sản phẩm';
+                $data['name_err'] = 'Please enter product name';
             }
 
             if (empty($data['price'])) {
-                $data['price_err'] = 'Vui lòng nhập giá sản phẩm';
-            }
-
-            if (empty($data['file']['name'])) {
-                $data['file_err'] = 'Vui lòng nhập ảnh miêu tả sản phẩm';
+                $data['price_err'] = 'Please enter product price';
             }
 
             if (empty($data['description'])) {
-                $data['description_err'] = 'Vui lòng điền thông tin sản phẩm';
+                $data['description_err'] = 'Please enter product description';
             }
 
-            if (empty($data['name_err']) && empty($data['price_err']) && empty($data['description_err']) && empty($data['file_err'])) {
-
-                // specifies the directory where the file is going to be placed
+            if (empty($data['name_err']) && empty($data['price_err']) && empty($data['description_err'])) {
                 $target_dir = PRODUCT_FOLDER;
+                try {
+                    $loader = new ThumbnailUpload($target_dir, true);
+                    $loader->setThumbOptions($target_dir, MAX_SIZE);
+                    $loader->upload('file', 1024*1000);
+                    $data['file_err'] = $loader->getMessages();
+                    $status = $loader->getStatus();
+                    $name = $loader->getName($_FILES['file']);
 
-                // specifies the path of the file to be uploaded
-                $target_file = $target_dir . basename($_FILES["file"]["name"]);
-
-                // Max size file
-                $maxSize = MAX_SIZE;
-                $uploadOk = 1;
-
-                // holds the file extension of the file (in lower case)
-                $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-                // Check if image file is actual image or fake image
-                if ($check = getimagesize($_FILES['file']['tmp_name'])) {
-                } else {
-
-                    $data['file_err'] = 'File is not an image';
-                    $uploadOK = 0;
-                }
-
-                // Check if file already exists
-                if (file_exists($target_file)) {
-                    $data['file_err'] = 'Sorry, file already exists';
-                    $uploadOK = 0;
-                }
-
-                // Check file size
-                if ($_FILES['file']['size'] > $maxSize) {
-                    $data['file_err'] = 'Sorry, this file is too large';
-                    $uploadOk = 0;
-                }
-
-                // Allow certain file formats
-                if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
-                    $data['file_err'] = 'Sorry! Only JPG, GIF, JPEG, GIF files are allowed';
-                    $uploadOk = 0;
-                }
-
-                if ($uploadOk == 0) {
-                    return $this->view('admin/products/add', $data);
-                } else {
-
-                    // Move photo to dir
-                    if (move_uploaded_file($_FILES['file']['tmp_name'], $target_file)) {
-
-                        // Insert photo tables, update users table
-                        if ($this->photoModel->upload($_FILES['file']['name'])) {
-
-                            // Insert products table
-                            $data['photo_id'] = $this->photoModel->getMaxId();
-
+                    if ($status) {
+                        if ($this->photoModel->upload($name, 1, 'Products')) {
+                            $photo_id = $this->photoModel->getMaxId();
+                            $data['photo_id'] = $photo_id;
                             if ($this->productModel->add($data)) {
-
-                                // Flash message
-                                flash('message', 'Tạo sản phẩm mới thành công');
-
-                                redirect('products/index', $data);
+                                $product_id = $this->productModel->getMaxId();
+                                if ($this->photoModel->updateProductId($photo_id, $product_id)) {
+                                    flash('message', 'Create product success');
+                                    redirect('/products/index');
+                                } else {
+                                    exit('Something went wrong');
+                                }
                             } else {
-                                exit('Some thing went wrong');
+                                exit('Something went wrong');
                             }
                         } else {
-                            exit('something went wrong');
+                            exit('Something went wrong');
                         }
                     } else {
-                        exit('Something went wrong');
+                        return $this->view('admin/products/add', $data);
                     }
+                } catch (Throwable $t) {
+                    echo $t->getMessage();
                 }
             } else {
                 return $this->view('admin/products/add', $data);
@@ -188,175 +148,164 @@ class ProductsController extends Controller
 
     public function edit($id)
     {
-        $categories = $this->categoryProductModel->getAll();
         $product = $this->productModel->getById($id);
-        $category = $this->productModel->getCategory($id);
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SESSION['user_role'] == 'admin' || $_SESSION['user_id'] == $product->user_id) {
+            $categories = $this->categoryProductModel->getAll();
 
-            // Sanitize Post data
-            // $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            $category = $this->productModel->getCategory($id);
 
-            $data = [
-                'name' => trim($_POST['name']),
-                'slug' => trim($_POST['slug']),
-                'price' => trim($_POST['price']),
-                'category' => trim($_POST['category']),
-                'description' => trim($_POST['description']),
-                'photo_id' => '',
-                'file' => $_FILES['file'],
-                'name_err' => '',
-                'price_err' => '',
-                'file_err' => '',
-                'description_err' => '',
-                'categories' => $categories,
-            ];
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-            if (empty($data['name'])) {
-                $data['name_err'] = 'Vui lòng điền tên sản phẩm';
-            }
+                $data = [
+                    'name' => test_input($_POST['name']),
+                    'slug' => test_input($_POST['slug']),
+                    'price' => test_input($_POST['price']),
+                    'category' => test_input($_POST['category']),
+                    'description' => test_input($_POST['description']),
+                    'photo_id' => $product->photo_id,
+                    'file' => $_FILES['file'],
+                    'name_err' => '',
+                    'price_err' => '',
+                    'file_err' => '',
+                    'description_err' => '',
+                    'categories' => $categories,
+                    'user_id' => $_SESSION['user_id'],
+                ];
 
-            if (empty($data['price'])) {
-                $data['price_err'] = 'Vui lòng nhập giá sản phẩm';
-            }
+                if (empty($data['name'])) {
+                    $data['name_err'] = 'Please enter product name';
+                }
 
-            if (empty($data['description'])) {
-                $data['description_err'] = 'Vui lòng điền thông tin sản phẩm';
-            }
+                if (empty($data['price'])) {
+                    $data['price_err'] = 'Please enter product price';
+                }
 
-            if (empty($data['name_err']) && empty($data['price_err']) && empty($data['description_err']) && empty($data['file_err'])) {
+                if (empty($data['description'])) {
+                    $data['description_err'] = 'Please enter product description';
+                }
 
-                if (!empty($_FILES['file']['name'])) {
+                if (empty($data['name_err']) && empty($data['price_err']) && empty($data['description_err']) ) {
 
-                    // specifies the directory where the file is going to be placed
-                    $target_dir = PRODUCT_FOLDER;
+                    if (!empty($_FILES['file']['name'])) {
 
-                    // specifies the path of the file to be uploaded
-                    $target_file = $target_dir . basename($_FILES["file"]["name"]);
+                        // specifies the directory where the file is going to be placed
+                        $target_dir = PRODUCT_FOLDER;
 
-                    // Max size file
-                    $maxSize = MAX_SIZE;
-                    $uploadOk = 1;
+                        try {
+                            $loader = new ThumbnailUpload($target_dir, true);
+                            $loader->setThumbOptions($target_dir, MAX_SIZE);
+                            $loader->upload('file', 1024*1000);
+                            $data['file_err'] = $loader->getMessages();
+                            $status = $loader->getStatus();
+                            $name = $loader->getName($_FILES['file']);
 
-                    // holds the file extension of the file (in lower case)
-                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                            if ($status) {
+                                // Delete old product image
+                                $oldName = $this->productModel->getPhoto($id);
+                                unlink(PRODUCT_FOLDER . $oldName);
 
-                    // Check if image file is actual image or fake image
-                    if ($check = getimagesize($_FILES['file']['tmp_name'])) {
-                    } else {
+                                // Update new path in DB
+                                if ($this->photoModel->updatePath($product->photo_id, $name)) {
+                                    if ($this->productModel->update($id, $data)) {
 
-                        $data['file_err'] = 'File is not an image';
-                        $uploadOK = 0;
-                    }
-
-                    // Check if file already exists
-                    if (file_exists($target_file)) {
-                        $data['file_err'] = 'Sorry, file already exists';
-                        $uploadOK = 0;
-                    }
-
-                    // Check file size
-                    if ($_FILES['file']['size'] > $maxSize) {
-                        $data['file_err'] = 'Sorry, this file is too large';
-                        $uploadOk = 0;
-                    }
-
-                    // Allow certain file formats
-                    if ($imageFileType != 'jpg' && $imageFileType != 'png' && $imageFileType != 'jpeg' && $imageFileType != 'gif') {
-                        $data['file_err'] = 'Sorry! Only JPG, GIF, JPEG, GIF files are allowed';
-                        $uploadOk = 0;
-                    }
-
-                    if ($uploadOk == 0) {
-                        return $this->view('admin/products/edit', $data);
-                    } else {
-
-                        // Move photo to dir
-                        if (move_uploaded_file($_FILES['file']['tmp_name'], $target_file)) {
-
-                            // Insert photo tables, update users table
-                            if ($this->photoModel->upload($_FILES['file']['name'])) {
-
-                                // Insert products table
-                                $data['photo_id'] = $this->photoModel->getMaxId();
-
-                                if ($this->productModel->update($id, $data)) {
-
-                                    // Flash message
-                                    flash('message', 'Cập nhật sản phẩm thành công');
-
-                                    redirect('products/index');
+                                        flash('message', 'Update product success');
+                                        redirect('/products/index');
+                                    } else {
+                                        exit('Something went wrong');
+                                    }
                                 } else {
-                                    exit('Some thing went wrong');
+                                    exit('Something went wrong');
                                 }
                             } else {
-                                exit('something went wrong');
+                                return $this->view('admin/products/add', $data);
                             }
+                        } catch (Throwable $t) {
+                            echo $t->getMessage();
+                        }
+
+                    } else {
+
+                        if ($this->productModel->update($id, $data)) {
+
+                            // Flash message
+                            flash('message', 'Update product success');
+
+                            redirect('products/index', $data);
                         } else {
-                            exit('Something went wrong');
+                            exit('Some thing went wrong');
                         }
                     }
                 } else {
-                    
-                    $data['photo_id'] = $product->photo_id;
-
-                    if ($this->productModel->update($id, $data)) {
-
-                        // Flash message
-                        flash('message', 'Cập nhật sản phẩm thành công');
-
-                        redirect('products/index', $data);
-                    } else {
-                        exit('Some thing went wrong');
-                    }
+                    return $this->view('admin/products/add', $data);
                 }
             } else {
-                return $this->view('admin/products/add', $data);
+
+                $data = [
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'price' => $product->price,
+                    'description' => $product->description,
+                    'name_err' => '',
+                    'price_err' => '',
+                    'description_err' => '',
+                    'categories' => $categories,
+                    'id' => $product->id,
+                    'category' => $category,
+                ];
+
+                return $this->view('admin/products/edit', $data);
             }
         } else {
-
-            $data = [
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'price' => $product->price,
-                'description' => $product->description,
-                'name_err' => '',
-                'price_err' => '',
-                'description_err' => '',
-                'categories' => $categories,
-                'id' => $product->id,
-                'category' => $category,
-            ];
-
-            return $this->view('admin/products/edit', $data);
+            exit('Permission deny');
         }
     }
 
     public function active($id)
     {
-        if ($this->productModel->active($id)) {
-            redirect('products/index');
+        if ($_SESSION['user_role'] == 'admin' || $_SESSION['user_role'] == 'editor') {
+            if ($this->productModel->active($id)) {
+                redirect('products/index');
+            } else {
+                exit('Something went wrong');
+            }
         } else {
-            exit('Something went wrong');
+            exit('Permission deny');
         }
     }
 
     public function inactive($id)
     {
-        if ($this->productModel->inactive($id)) {
-            redirect('products/index');
+        if ($_SESSION['user_role'] == 'admin' || $_SESSION['user_role'] == 'editor') {
+            if ($this->productModel->inactive($id)) {
+                redirect('products/index');
+            } else {
+                exit('Something went wrong');
+            }
         } else {
-            exit('Something went wrong');
+            exit('Permission deny');
         }
     }
 
     public function delete($id)
     {
-        if ($this->productModel->delete($id)) {
-            flash('message', 'Xóa sản phẩm thành công!');
-            redirect('products/index');
+        $product = $this->productModel->getById($id);
+        if ($_SESSION['user_role'] == 'admin' || $_SESSION['user_id'] == $product->user_id) {
+            $photoName = $this->productModel->getPhoto($id);
+
+            if ($this->productModel->delete($id)) {
+                if ($this->photoModel->delete($product->photo_id)){
+                    unlink(PRODUCT_FOLDER . $photoName);
+                    flash('message', 'Product deleted!');
+                    redirect('products/index');
+                } else {
+                    exit('Something went wrong');
+                }
+            } else {
+                exit('Something went wrong');
+            }
         } else {
-            exit('Something went wrong');
+            exit('Permission deny');
         }
     }
 

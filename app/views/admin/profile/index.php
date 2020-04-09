@@ -52,7 +52,14 @@
                   <p class="card-text my-2 ">Full Name: <strong><?php echo $data['user']->last_name . ' ' . $data['user']->first_name ?></strong></p>
                   <p class="card-text my-2">Email: <strong><?php echo $data['user']->email; ?></strong></p>
                   <p class="card-text my-2">Gender: <strong><?php echo ucfirst($data['gender']); ?></strong></p>
-                  <p class="card-text my-2">Birthday: <strong><?php echo $data['user']->birthday; ?></strong></p>
+                  <p class="card-text my-2">Birthday: <strong>
+                          <?php
+                          $date = $data['user']->birthday;
+                          $date = strtotime($date);
+                          echo date('d/m/Y', $date);
+                          ?>
+                      </strong>
+                  </p>
                   <p class="card-text my-2">Phone: <strong><?php echo $data['user']->phone ?? ''; ?></strong></p>
                   <p class="card-text my-2">Join at:
                       <strong>

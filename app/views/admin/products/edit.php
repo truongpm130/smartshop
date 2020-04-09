@@ -29,7 +29,7 @@
                 <!-- Edit Products -->
                 <form action="<?php echo URLROOT; ?>/products/edit/<?php echo $data['id'] ?>" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="name">Tên sản phẩm: </label>
+                        <label for="name">Product name: </label>
                         <input type="text" name="name" id="product_name" class="form-control <?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>">
                         <span class="invalid-feedback"><?php echo $data['name_err']; ?></span>
                     </div>
@@ -48,13 +48,13 @@
                     </script>
 
                     <div class="form-group">
-                        <label for="price">Giá: </label>
+                        <label for="price">Price: </label>
                         <input type="number" name="price" min="1" id="" class="form-control <?php echo (!empty($data['price_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['price']; ?>">
                         <span class="invalid-feedback"><?php echo $data['price_err']; ?></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="category"> Thể Loại: </label>
+                        <label for="category"> Category: </label>
                         <select name="category" id="" class="form-control">
                             <option value="<?php echo $data['category']->categoryId ?>"><?php echo $data['category']->categoryName ?></option>
                             <?php foreach ($data['categories'] as $category) : ?>
@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Miêu tả: </label>
+                        <label for="description">Description: </label>
                         <textarea name="description" id="editor_product" rows="10" class="form-control <?php echo (!empty($data['description_err']) ? 'is-invalid' : '') ?>"><?php echo $data['description']; ?></textarea>
                         <span class="invalid-feedback"><?php echo $data['description_err']; ?></span>
                         
@@ -86,7 +86,7 @@
                         </script>
                     </div>
 
-                    <input type="submit" value="Cập nhật sản phẩm" class="btn btn-primary btn-block">
+                    <input type="submit" value="Update" class="btn btn-primary btn-block">
                 </form>
             </div>
             <!-- /.container-fluid -->

@@ -29,8 +29,8 @@
                 <!-- Add Products -->
                 <form action="<?php echo URLROOT; ?>/products/add" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="name">Tên sản phẩm: </label>
-                        <input type="text" name="name" id="product_name" class="form-control <?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>">
+                        <label for="name">Product Name: </label>
+                        <input type="text" name="name" id="product_name" class="form-control <?php echo (!empty($data['name_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['name']; ?>" required>
                         <span class="invalid-feedback"><?php echo $data['name_err']; ?></span>
                     </div>
 
@@ -48,17 +48,24 @@
                     </script>
 
                     <div class="form-group">
-                        <label for="price">Giá: </label>
-                        <input type="number" name="price" min="1" id="" class="form-control <?php echo (!empty($data['price_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['price']; ?>">
+                        <label for="price">Price: </label>
+                        <input type="number" name="price" min="1" id="" class="form-control <?php echo (!empty($data['price_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['price']; ?>" required>
                         <span class="invalid-feedback"><?php echo $data['price_err']; ?></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="category"> Thể Loại: </label>
-                        <select name="category" id="" class="form-control">
-                            <option value=""></option>
+                        <label for="category"> Category: </label>
+                        <select name="category" id="" class="form-control" required>
+                            <option value="">Choose Category</option>
                             <?php foreach ($data['categories'] as $category) : ?>
-                                <option value="<?php echo $category->id ?>"><?php echo $category->name ?></option>
+                                <option value="<?php echo $category->id ?>"
+                                    <?php
+                                        if (isset($data['category'])) {
+                                            if ($data['category'] == $category->id) {
+                                                echo 'selected';
+                                            }
+                                        }
+                                    ?>><?php echo $category->name ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -66,10 +73,15 @@
                     <div class="my-3">
                         <label for="file">Photo</label>
                         <input type="file" name="file" id="">
+                        <?php if(!empty($data['file_err'])) :?>
+                        <?php foreach ($data['file_err'] as $item) :?>
+                            <p class="text-danger text-small"><?php echo $item ?></p>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Miêu tả: </label>
+                        <label for="description">Description: </label>
                         <textarea name="description" id="editor_product" rows="10" class="form-control <?php echo (!empty($data['description_err']) ? 'is-invalid' : '') ?>"><?php echo $data['description']; ?></textarea>
                         <span class="invalid-feedback"><?php echo $data['description_err']; ?></span>
                         
@@ -83,7 +95,7 @@
                         </script>
                     </div>
 
-                    <input type="submit" value="Thêm sản phẩm" class="btn btn-primary btn-block">
+                    <input type="submit" value="Add Product" class="btn btn-primary btn-block">
                 </form>
             </div>
             <!-- /.container-fluid -->

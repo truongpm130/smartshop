@@ -11,7 +11,7 @@ class Product extends Database {
 
     public function add($data)
     {
-        $this->db->query('INSERT INTO products (category_id, name, slug, price, photo_id,  description) VALUES (:category_id, :name, :slug, :price, :photo_id, :description)');
+        $this->db->query('INSERT INTO products (category_id, name, slug, price, photo_id,  description, user_id) VALUES (:category_id, :name, :slug, :price, :photo_id, :description, :user_id)');
 
         $this->db->bind('category_id', $data['category']);
         $this->db->bind('name', $data['name']);
@@ -19,6 +19,7 @@ class Product extends Database {
         $this->db->bind('price', $data['price']);
         $this->db->bind('photo_id', $data['photo_id']);
         $this->db->bind('description', $data['description']);
+        $this->db->bind('user_id', $data['user_id']);
 
         if ($this->db->execute()) {
             return true;
@@ -30,7 +31,7 @@ class Product extends Database {
 
     public function update($id, $data)
     {
-        $this->db->query('UPDATE products SET category_id = :category_id, name = :name, slug = :slug, price = :price, photo_id = :photo_id, description = :description WHERE id= :id');
+        $this->db->query('UPDATE products SET category_id = :category_id, name = :name, slug = :slug, price = :price, photo_id = :photo_id, description = :description, user_id = :user_id WHERE id= :id');
 
         $this->db->bind('category_id', $data['category']);
         $this->db->bind('name', $data['name']);
@@ -39,6 +40,7 @@ class Product extends Database {
         $this->db->bind('photo_id', $data['photo_id']);
         $this->db->bind('description', $data['description']);
         $this->db->bind('id', $id);
+        $this->db->bind('user_id', $data['user_id']);
 
         if ($this->db->execute()) {
             return true;
@@ -206,6 +208,34 @@ class Product extends Database {
 
         if ($rows) {
             return $rows;
+        } else {
+            return false;
+        }
+    }
+
+    public function getMaxId()
+    {
+        $this->db->query('SELECT MAX(id) AS maxId FROM products');
+        $row = $this->db->single();
+
+        if ($row) {
+            return (int) $row->maxId;
+        } else {
+            return false;
+        }
+    }
+
+    public function getPhoto($id) {
+        $this->db->query('SELECT photos.path AS photoPath 
+                                FROM products
+                                INNER JOIN photos ON products.photo_id = photos.id
+                                WHERE products.id = :id
+                        ');
+        $this->db->bind('id', $id);
+        $row = $this->db->single();
+
+        if ($row) {
+            return $row->photoPath;
         } else {
             return false;
         }

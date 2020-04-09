@@ -287,5 +287,31 @@ class User extends Database {
         }
     }
 
+    public function getRole($user_id) {
+        $this->db->query('SELECT 
+                        users.id AS userId,
+                        roles.name AS roleName 
+                        FROM role_user
+                        INNER JOIN users ON role_user.user_id = users.id
+                        INNER JOIN roles ON role_user.role_id = roles.id
+                        WHERE users.id = :user_id
+                        ');
+        $this->db->bind('user_id', $user_id);
+        $row = $this->db->single();
+        if ($row) {
+            return $row->roleName;
+        } else {
+            return false;
+        }
+    }
 
+    public function isAdmin($user_id) {
+
+        $role = $this->getRole($user_id);
+        if ($role == 'admin') {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
